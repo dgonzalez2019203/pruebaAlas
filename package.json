@@ -1,0 +1,23 @@
+{
+  "name": "alasback-prubea",
+  "version": "1.0.0",
+  "description": "proyecto de prueba",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "Diego Gonzalez",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "connect-multiparty": "^2.2.0",
+    "express": "^4.17.1",
+    "jwt-simple": "^0.5.6",
+    "moment": "^2.29.1",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
