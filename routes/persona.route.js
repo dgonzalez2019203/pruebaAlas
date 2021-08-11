@@ -2,10 +2,10 @@
 
 var express = require("express");
 
-var userController = require("../controllers/persona.controller");
-
+var userController = require("../controllers/user.controller");
+var mdAuth = require("../middlewares/authenticated");
 var api = express.Router();
 
-api.get("/getusers",userController.getUsers);
+api.post("/login",userController.login);
 
 module.exports = api;

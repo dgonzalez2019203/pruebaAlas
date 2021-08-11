@@ -19,6 +19,6 @@ app.use((req, res, next)=>{
 	next();
 });
 
-app.use("/prueba",userRoutes);
+app.use("/alasgt",userRoutes);
 
 module.exports = app;
