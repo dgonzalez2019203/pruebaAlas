@@ -4,7 +4,6 @@ var port  = 3800;
 var conexion = "";
 mysql.Promise = global.Promise;
 
-
 conexion = mysql.createConnection({
     host: '173.255.247.91',
     database: 'alasgt_DBAlasGt',

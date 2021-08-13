@@ -5,7 +5,7 @@ var jwt = require("jwt-simple");
 var moment = require("moment");
 
 
-var secretKey = "alasgt2021";
+var secretKey = "AlasGt2021";
 
 exports.enshureAuth = (req,res,next)=>{
     if(!req.headers.authorization){
