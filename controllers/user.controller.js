@@ -25,6 +25,30 @@ function login(req,res){
     }
 }
 
+function register(req,res){
+    var params = req.body;
+
+    if(params.userName, params.usuarioNombre, params.usuarioApellido, params.usuarioCorreo, params.usuarioContrasena, params.empresaDesc, params.empresaNumeroCuenta,
+        params.tipoUsuarioId, params.estadoUsuarioId, params.empresaCuentaTipo, params.empresaBanco, params.telefono){
+
+            let password = md5( params.usuarioContrasena);
+            let query = 'call Sp_AgregarUsuario2("'+params.usuarioNombre+'","'+params.usuarioApellido+'","'+params.userName+'","'+password+'","'+params.usuarioCorreo+'","'+params.tipoUsuarioId+'","'+params.empresaDesc+'","'+params.empresaNumeroCuenta+'","'+params.empresaCuentaTipo+'","'+params.empresaBanco+'","'+params.telefono+'","'+params.estadoUsuarioId+'")';            
+
+            conexion.query(query, (err, userSaved)=>{
+                if(err){
+                    res.send({message:"error general"});
+                }else if(userSaved){
+                    res.send({message:"Usuario creado", userSaved});
+                }else{
+                    res.send({message:"No se ha podido crear este usuario"})
+                }
+            });
+    }else{
+        res.send({message:"Ingresa los campos obligatorios"});
+    }
+}
+
 module.exports ={
-    login
+    login,
+    register
 }
