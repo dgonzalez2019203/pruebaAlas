@@ -38,6 +38,22 @@ function listPedidosC(req,res){
     });
 }
 
+
+function listPedidosA(req,res){
+    let query = 'call Sp_ListarPedidosCliente("'+userId+'")';
+    console.log(query);
+
+    conexion.query(query, (err, findPedidos)=>{
+        if(err){
+            res.send({message:"Error general"});
+        }else if(findPedidos){
+            res.send({message:"Pedidos encontrados", findPedidos});
+        }else{
+            res.send({message:"Aun no has hecho ningun pedido, te esperamos pronto"})
+        }
+    });
+}
+
 function listPedidosCE(req,res){
     var userId = req.params.id;
 
@@ -116,5 +132,5 @@ module.exports ={
     listPedidos,
     listPedidosM,
     listPedidosME,
-    listPedidosF
+    listPedidosF,
 }
