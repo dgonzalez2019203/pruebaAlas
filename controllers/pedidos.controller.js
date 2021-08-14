@@ -6,10 +6,7 @@ var conexion = configConexion.conexion;
 
 function listPedidos(req,res){
     var fecha = "2021-01-01"
-
     let query = 'call Sp_ListarPedido("'+fecha+'")';
-    console.log(query);
-
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"Error general"});
@@ -25,8 +22,6 @@ function listPedidosC(req,res){
     var userId = req.params.id;
 
     let query = 'call Sp_ListarPedidosCliente("'+userId+'")';
-    console.log(query);
-
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"Error general"});
@@ -41,8 +36,6 @@ function listPedidosC(req,res){
 
 function listPedidosA(req,res){
     let query = 'call Sp_ListarPedidosCliente("'+userId+'")';
-    console.log(query);
-
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"Error general"});
@@ -58,8 +51,6 @@ function listPedidosCE(req,res){
     var userId = req.params.id;
 
     let query = 'call Sp_ListarPedidosClienteEspecial("'+userId+'")';
-    console.log(query);
-
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"Error general"});
@@ -75,8 +66,6 @@ function listPedidosM(req,res){
     var mensajeroId = req.params.id;
 
     let query = 'call Sp_ListarPedidoMensajero("'+mensajeroId+'")';
-    console.log(query);
-
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"Error general"});
@@ -92,8 +81,6 @@ function listPedidosME(req,res){
     var mensajeroId = req.params.id;
 
         let query = 'call Sp_ListarPedidoMensajeroEspecial("'+mensajeroId+'")';
-        console.log(query);
-    
         conexion.query(query, (err, findPedidos)=>{
             if(err){
                 res.send({message:"Error general"});
@@ -110,8 +97,6 @@ function listPedidosF(req,res){
 
     if(params.fechaBusqueda){
         let query = 'call Sp_ListarPedidoPorFecha("'+params.fechaBusqueda+'")';
-        console.log(query);
-    
         conexion.query(query, (err, findPedidos)=>{
             if(err){
                 res.send({message:"Error general"});
