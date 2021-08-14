@@ -8,5 +8,6 @@ var api = express.Router();
 
 api.post("/login",userController.login);
 api.post("/register",userController.register);
+api.get("/getBancos",userController.getBancos);
 
 module.exports = api;

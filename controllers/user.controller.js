@@ -4,6 +4,15 @@ var configConexion =  require("../config/conexion");
 var conexion = configConexion.conexion;
 var md5 = require("md5")
 var jwt = require("../services/jwt");
+var nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'davisrldn@gmail.com',
+      pass: 'ordonez2003'
+    }
+});
 
 function login(req,res){
     if(req.body.userName && req.body.usuarioContrasena){
@@ -30,25 +39,52 @@ function register(req,res){
 
     if(params.userName, params.usuarioNombre, params.usuarioApellido, params.usuarioCorreo, params.usuarioContrasena, params.empresaDesc, params.empresaNumeroCuenta,
         params.tipoUsuarioId, params.estadoUsuarioId, params.empresaCuentaTipo, params.empresaBanco, params.telefono){
-
-            let password = md5( params.usuarioContrasena);
-            let query = 'call Sp_AgregarUsuario2("'+params.usuarioNombre+'","'+params.usuarioApellido+'","'+params.userName+'","'+password+'","'+params.usuarioCorreo+'","'+params.tipoUsuarioId+'","'+params.empresaDesc+'","'+params.empresaNumeroCuenta+'","'+params.empresaCuentaTipo+'","'+params.empresaBanco+'","'+params.telefono+'","'+params.estadoUsuarioId+'")';            
-
-            conexion.query(query, (err, userSaved)=>{
+            let query1 = "SELECT * FROM Usuario WHERE userName = '"+params.userName+"' or usuarioCorreo='"+params.usuarioCorreo+"'";
+            conexion.query(query1, (err, userFind)=>{
                 if(err){
-                    res.send({message:"error general"});
-                }else if(userSaved){
-                    res.send({message:"Usuario creado", userSaved});
+                    console.log(err)
+                    return res.send({message:"error general"});
+                }else if(userFind){
+                    console.log(userFind)
+                   return  res.send({message:"username o correo ya están en uso", userFind});
                 }else{
-                    res.send({message:"No se ha podido crear este usuario"})
+                    let password = md5( params.usuarioContrasena);
+                    let query = 'call Sp_AgregarUsuario2("'+params.usuarioNombre+'","'+params.usuarioApellido+'","'+params.userName+'","'+password+'","'+params.usuarioCorreo+'","'+params.tipoUsuarioId+'","'+params.empresaDesc+'","'+params.empresaNumeroCuenta+'","'+params.empresaCuentaTipo+'","'+params.empresaBanco+'","'+params.telefono+'","'+params.estadoUsuarioId+'")';            
+                    conexion.query(query, (err, userSaved)=>{
+                        if(err){
+                            console.log(err)
+                            res.send({message:"error general"});
+                        }else if(userSaved){
+                            console.log(userSaved)
+                            res.send({message:"Usuario creado", userSaved});
+                        }else{
+                            res.send({message:"No se ha podido crear este usuario"})
+                        }
+                    });
                 }
             });
+
     }else{
         res.send({message:"Ingresa los campos obligatorios"});
     }
 }
 
+function getBancos(req,res){
+    let query1 = 'call Sp_ListarBanco()';
+        
+    conexion.query(query1, (err, bancos)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(bancos){
+            res.send({message:"bancos encontrados", bancos});
+        }else{
+            res.send({message:"no se ha econtrado bancos"})
+        }
+    });
+}
+
 module.exports ={
     login,
-    register
+    register,
+    getBancos
 }
