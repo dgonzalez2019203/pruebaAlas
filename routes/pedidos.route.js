@@ -13,6 +13,13 @@ api.get("/listPedidosCE/:id",[mdAuth.enshureAuth],pedidosController.listPedidosC
 api.get("/listPedidosM/:id",[mdAuth.enshureAuth],pedidosController.listPedidosM); //Listar pedidos mensajero
 api.get("/listPedidosME/:id",[mdAuth.enshureAuth],pedidosController.listPedidosME); //Listar pedidos especiales por mensajero 
 
+api.post("/confirmarPedido/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.confirmarPedido);
+api.post("/confirmarPedidoEspecial/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.confirmarPedidoEspecial);
+api.post("/savePedido",[mdAuth.enshureAuth],pedidosController.confirmarPedidoEspecial);
+
+api.get("/getFormaPago",[mdAuth.enshureAuth],pedidosController.getFormaPago);
+api.get("/getZonas",[mdAuth.enshureAuth],pedidosController.getZonas);
+api.get("/getZonasYFecha",[mdAuth.enshureAuth],pedidosController.getZonasYFecha);
 
 
 module.exports = api;

@@ -83,8 +83,80 @@ function getBancos(req,res){
     });
 }
 
+function updateUser(req,res){
+    var params = req.body;
+    var userId = req.params.id;
+
+    if(params.usuarioNombre && params.usuarioApellido && params.userName && params.usuarioContrasena && params.usuarioCorreo){
+        let query = "SELECT * FROM Usuario WHERE userName = '"+params.userName+"' or usuarioCorreo='"+params.usuarioCorreo+"'";
+
+        conexion.query(query, (err, userFind)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(userFind){
+                var pass1 = Number.parseInt(userId);
+                var pass2 = Number.parseInt(userFind[0].usuarioId);
+
+                if(pass2 ==  pass1){
+                    let password = md5( params.usuarioContrasena);
+                    let query1 = 'call Sp_EditarUsuarioSC("'+userId+'","'+params.usuarioNombre+'","'+params.usuarioApellido+'","'+params.userName+'","'+password+'","'+params.usuarioCorreo+'")';            
+                    conexion.query(query1, (err, userUpdate)=>{
+                        if(err){
+                            res.send({message:"error general"});
+                        }else if(userUpdate){
+                            res.send({message:"Usuario actualizado", userUpdate});
+                        }else{
+                            res.send({message:"No se pudo actualizar la informacion"});
+                        }
+                    })
+                }else{
+                   return  res.send({message:"username o correo ya están en uso", userFind});
+                }
+            }else{
+                let password = md5( params.usuarioContrasena);
+                let query1 = 'call Sp_EditarUsuarioSC("'+userId+'","'+params.usuarioNombre+'","'+params.usuarioApellido+'","'+params.userName+'","'+password+'","'+params.usuarioCorreo+'")';            
+                conexion.query(query1, (err, userUpdate)=>{
+                    if(err){
+                        res.send({message:"error general"});
+                    }else if(userUpdate){
+                        res.send({message:"Usuario actualizado", userUpdate});
+                    }else{
+                        res.send({message:"No se pudo actualizar la informacion"});
+                    }
+                })
+            }
+        })
+    }else{
+        res.send({message:"Ingresa los campos obligatorios"});
+    }
+}
+
+function passRecovery(req,res){
+    var userId = req.params.id;
+    var params = req.body;
+
+    if(params.usuarioContrasena){
+        let password = md5( params.usuarioContrasena);
+        let query1 = 'call 	Sp_RecoveryPass("'+userId+'","'+password+'")'; 
+    
+        conexion.query(query1, (err, userUpdate)=>{
+            if(err){
+                res.send({message:"error general", err});
+            }else if(userUpdate){
+                res.send({message:"Contraseña actualizada", userUpdate});
+            }else{
+                res.send({message:"No se pudo actualizar la informacion"});
+            }
+        })
+    }else{
+        res.send({message:"Ingresa los campos obligatorios"});
+    }
+}
+
 module.exports ={
     login,
     register,
-    getBancos
+    getBancos,
+    updateUser,
+    passRecovery
 }

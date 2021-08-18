@@ -111,6 +111,124 @@ function listPedidosF(req,res){
     }
 }
 
+function confirmarPedido(req, res){
+    var pedidoId = req.params.id;
+    var params = req.body;
+
+    if(params.mensajero && params.costo && params.estado && params.monto && params.formaP && params.coment){
+        let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajero+'","'+params.costo+'","'+params.estado+'","'+params.monto+'","'+params.formaP+'","'+params.coment+'")';            
+
+        conexion.query(query, (err, pedidoUpdate)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(pedidoUpdate){
+                res.send({message:"Pedido marcado como confirmado", pedidoUpdate});
+            }else{
+                res.send({message:"No se pudo actualizar la informacion"});
+            }
+        })
+    }else{
+        res.send({message:"Ingresa los campos obligatorios"});
+    }
+}
+
+
+function confirmarPedidoEspecial(req, res){
+    var pedidoId = req.params.id;
+    var params = req.body;
+
+    if(params.mensajero && params.costo && params.estado && params.monto && params.formaP && params.coment){
+        let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajero+'","'+params.costo+'","'+params.estado+'","'+params.monto+'","'+params.formaP+'","'+params.coment+'")';            
+
+        conexion.query(query, (err, pedidoUpdate)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(pedidoUpdate){
+                res.send({message:"Pedido marcado como confirmado", pedidoUpdate});
+            }else{
+                res.send({message:"No se pudo actualizar la informacion"});
+            }
+        })
+    }else{
+        res.send({message:"Ingresa los campos obligatorios"});
+    }
+}
+
+function getFormaPago(req,res){
+    let query = 'call Sp_ListarFormaPago()';
+        
+    conexion.query(query, (err, formaPagos)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(formaPagos){
+            res.send({message:"Forma de pagos encontrados", formaPagos});
+        }else{
+            res.send({message:"no se ha econtrado forma de pagos"})
+        }
+    });
+}
+
+function getZonas(req,res){
+    var params = req.body;
+    // Es un dato INT
+    let query = 'call Sp_ListarPorzonas("'+params.nombreLugar+'")';
+        
+    conexion.query(query, (err, porZonas)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(porZonas){
+            res.send({message:"Zonas encontradas", porZonas});
+        }else{
+            res.send({message:"no se ha econtrado forma de pagos"})
+        }
+    });
+}
+
+function getZonasYFecha(req,res){
+    var params = req.body;
+    // Es un dato INT
+
+    if(params.nombreLugar && params.pedidoFecha){
+        let query = 'call Sp_ListarPorfechaYzona("'+params.nombreLugar+'","'+params.pedidoFecha+'")';
+        
+        conexion.query(query, (err, porZonas)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(porZonas){
+                res.send({message:"Zonas encontradas", porZonas});
+            }else{
+                res.send({message:"no se ha econtrado forma de pagos"})
+            }
+        });
+    }else{
+        res.send({message:"Ingresa los campos obligatorios"}); 
+    }
+}
+
+function savePedido(req, res){
+    var params = req.body;
+
+    if(params.pedidoPuntoInicio && params.pedidoDireccionInicio && params.pedidoPuntoFinal && params.pedidoDireccionFinal && params.pedidoUsuarioId
+        && params.pedidoTelefonoReceptor && params.pedidoCosto && params.pedidoMonto && params.nombreReceptor && params.pedidoDesc && params.pedidoFecha){
+
+            let query = 'call Sp_ConfirmarPedido("'+params.pedidoPuntoInicio+'","'+params.pedidoDireccionInicio+'","'+params.pedidoPuntoFinal+'","'+params.pedidoDireccionFinal+'","'+params.pedidoUsuarioId+'","'+params.pedidoTelefonoReceptor+'","'+params.pedidoCosto+'","'+params.pedidoMonto+'","'+params.nombreReceptor+'","'+params.params.pedidoDesc+'","'+params.params.pedidoFecha+'")';            
+            conexion.query(query, (err, pedidoSaved)=>{
+                if(err){
+                    res.send({message:"error general"});
+                }else if(pedidoSaved){
+                    res.send({message:"Pedido solicitado exitosamente", pedidoSaved});
+                }else{
+                    res.send({message:"no se ha econtrado forma de pagos"})
+                }
+            });
+    }else{
+
+    }
+
+}
+
+
+
 module.exports ={
     listPedidosC,
     listPedidosCE,
@@ -118,4 +236,10 @@ module.exports ={
     listPedidosM,
     listPedidosME,
     listPedidosF,
+    confirmarPedido,
+    confirmarPedidoEspecial,
+    getFormaPago,
+    getZonas,
+    getZonasYFecha,
+    savePedido
 }
