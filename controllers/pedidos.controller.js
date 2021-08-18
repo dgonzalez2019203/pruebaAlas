@@ -113,10 +113,10 @@ function listPedidosF(req,res){
 
 function confirmarPedido(req, res){
     var pedidoId = req.params.id;
-    var params = req.body;
+    var params = req.body;  
 
-    if(params.mensajero && params.costo && params.estado && params.monto && params.formaP && params.coment){
-        let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajero+'","'+params.costo+'","'+params.estado+'","'+params.monto+'","'+params.formaP+'","'+params.coment+'")';            
+    if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto && params.formaPagoId && params.pedidoDesc){
+        let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajerId+'","'+params.pedidoCosto+'","'+params.estado+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';            
 
         conexion.query(query, (err, pedidoUpdate)=>{
             if(err){
@@ -164,6 +164,21 @@ function getFormaPago(req,res){
             res.send({message:"Forma de pagos encontrados", formaPagos});
         }else{
             res.send({message:"no se ha econtrado forma de pagos"})
+        }
+    });
+}
+
+
+function getMensajero(req,res){
+    let query = 'call Sp_ListarMensajero()';
+        
+    conexion.query(query, (err, mensajeros)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(mensajeros){
+            res.send({message:"Mensajeros encontrados", mensajeros});
+        }else{
+            res.send({message:"no se ha econtrado mensajeros"})
         }
     });
 }
@@ -222,11 +237,25 @@ function savePedido(req, res){
                 }
             });
     }else{
-
+        return res.send({message:"ingrese los campos obligatorios"})
     }
 
 }
 
+function deletePedido(req,res){
+    var id = req.params.id;
+    let query = 'call Sp_EliminarPedido('+id+')';
+        
+    conexion.query(query, (err, pedidoDeleted)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(pedidoDeleted){
+            res.send({message:"Pedido eliminado exitosamente", pedidoDeleted});
+        }else{
+            res.send({message:"no se ha podido eliminar este pedido"})
+        }
+    });
+}
 
 
 module.exports ={
@@ -241,5 +270,7 @@ module.exports ={
     getFormaPago,
     getZonas,
     getZonasYFecha,
-    savePedido
+    savePedido,
+    getMensajero,
+    deletePedido
 }
