@@ -92,6 +92,22 @@ function listPedidosME(req,res){
         });    
 }
 
+
+function listPedidosEstado(req,res){
+    var estado = req.params.id;
+
+        let query = 'call Sp_ListarPedidoPorEstado("'+estado+'")';
+        conexion.query(query, (err, findPedidos)=>{
+            if(err){
+                res.send({message:"Error general"});
+            }else if(findPedidos){
+                res.send({message:"Pedidos encontrados", findPedidos});
+            }else{
+                res.send({message:"Aun no has hecho ningun pedido, te esperamos pronto"})
+            }
+        });    
+}
+
 function listPedidosF(req,res){
     var params = req.body;
 
@@ -123,6 +139,33 @@ function confirmarPedido(req, res){
                 res.send({message:"error general"});
             }else if(pedidoUpdate){
                 res.send({message:"Pedido marcado como confirmado", pedidoUpdate});
+            }else{
+                res.send({message:"No se pudo actualizar la informacion"});
+            }
+        })
+    }else{
+        res.send({message:"Ingresa los campos obligatorios"});
+    }
+}
+
+
+function editarPedido(req, res){
+    var pedidoId = req.params.id;
+    var params = req.body;  
+    console.log(params.mensajerId);
+    console.log(params.pedidoCosto);
+    console.log(params.estado);
+    console.log(params.pedidoMonto);
+    console.log(params.formaPagoId);
+    console.log(params.pedidoDesc);
+    if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto && params.formaPagoId && params.pedidoDesc){
+        let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajerId+'","'+params.pedidoCosto+'","'+params.estado+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';            
+
+        conexion.query(query, (err, pedidoUpdate)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(pedidoUpdate){
+                res.send({message:"se ha editado el pedido de manera exitosa", pedidoUpdate});
             }else{
                 res.send({message:"No se pudo actualizar la informacion"});
             }
@@ -272,5 +315,7 @@ module.exports ={
     getZonasYFecha,
     savePedido,
     getMensajero,
-    deletePedido
+    deletePedido,
+    editarPedido,
+    listPedidosEstado
 }
