@@ -127,6 +127,8 @@ function listPedidosF(req,res){
     }
 }
 
+
+/* Funciones de admin*/
 function confirmarPedido(req, res){
     var pedidoId = req.params.id;
     var params = req.body;  
@@ -263,13 +265,35 @@ function getZonasYFecha(req,res){
     }
 }
 
+
+function savePedidoCredito(req,res){
+    var pedidoId = req.params.id;
+    var creditoId = req.params.idC;
+
+    let query = 'call Sp_AgregarPedidoCredito("'+creditoId+'","'+pedidoId+'")';
+
+    conexion.query(query, (err, pedidoSaved)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(pedidoSaved){
+            res.send({message:"Credito asignado exitosamente"})
+        }else{
+            res.send({message:"Pedido no encontrado"})
+        }
+    })
+}
+
+
+
+/* Funciones de usuario normal*/
 function savePedido(req, res){
     var params = req.body;
+    var pedidoId = req.params.id;
 
     if(params.pedidoPuntoInicio && params.pedidoDireccionInicio && params.pedidoPuntoFinal && params.pedidoDireccionFinal && params.pedidoUsuarioId
         && params.pedidoTelefonoReceptor && params.pedidoCosto && params.pedidoMonto && params.nombreReceptor && params.pedidoDesc && params.pedidoFecha){
 
-            let query = 'call Sp_ConfirmarPedido("'+params.pedidoPuntoInicio+'","'+params.pedidoDireccionInicio+'","'+params.pedidoPuntoFinal+'","'+params.pedidoDireccionFinal+'","'+params.pedidoUsuarioId+'","'+params.pedidoTelefonoReceptor+'","'+params.pedidoCosto+'","'+params.pedidoMonto+'","'+params.nombreReceptor+'","'+params.params.pedidoDesc+'","'+params.params.pedidoFecha+'")';            
+            let query = 'call Sp_AgregarPedido("'+pedidoId+'","'+params.params.pedidoFecha+'","'+params.pedidoPuntoInicio+'","'+params.pedidoDireccionInicio+'","'+params.pedidoPuntoFinal+'","'+params.pedidoDireccionFinal+'","'+userId+'","'+params.pedidoTelefonoReceptor+'","'+params.pedidoCosto+'","'+params.pedidoMonto+'","'+params.nombreReceptor+'","'+params.pedidoDesc+'")';            
             conexion.query(query, (err, pedidoSaved)=>{
                 if(err){
                     res.send({message:"error general"});
@@ -282,23 +306,49 @@ function savePedido(req, res){
     }else{
         return res.send({message:"ingrese los campos obligatorios"})
     }
-
 }
 
-function deletePedido(req,res){
-    var id = req.params.id;
-    let query = 'call Sp_EliminarPedido('+id+')';
-        
-    conexion.query(query, (err, pedidoDeleted)=>{
+function removePedido(req,res){
+    var pedidoId = req.params.id;
+
+    let query = 'call Sp_EliminarPedido("'+ pedidoId +'")';            
+
+    conexion.query(query, (err, pedidoRemoved)=>{
         if(err){
             res.send({message:"error general"});
-        }else if(pedidoDeleted){
-            res.send({message:"Pedido eliminado exitosamente", pedidoDeleted});
+        }else if(pedidoRemoved){
+            res.send({message:"Pedido eliminado exitosamente"})
         }else{
-            res.send({message:"no se ha podido eliminar este pedido"})
+            res.send({message:"Pedido no encontrado"})
         }
-    });
+    })
 }
+
+function savePedidoEspecial(req,res){
+    var userId = req.params.id;
+    var params = req.body;
+
+    if(params.pedidoDesc && params.pedidoFecha){
+        let query = 'call Sp_AgregarPedidoEspecial("'+userId+'","'+params.pedidoDesc+'","'+params.pedidoFecha+'")';
+        conexion.query(query, (err, pedidoSaved)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(pedidoSaved){
+                res.send({message:"Pedido especial creado exitosamente"})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Envia los datos minimos para la creacion de tu pedido"})
+    }
+}
+
+
+
+/* Funciones de mensajero*/
+
+
 
 
 module.exports ={
@@ -314,8 +364,7 @@ module.exports ={
     getZonas,
     getZonasYFecha,
     savePedido,
-    getMensajero,
-    deletePedido,
-    editarPedido,
-    listPedidosEstado
+    removePedido,
+    savePedidoCredito,
+    savePedidoEspecial
 }
