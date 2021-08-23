@@ -8,11 +8,19 @@ var secretKey = 'AlasGt2021';
 
 exports.createToken = (user)=>{
     var payload = {
-        sub: user._id,
-        name:user.name,
-        lastName:user.lastName,
-        email: user.email,
-        role: user.role,
+        sub: user.userId,
+        userName:user.userName,
+        usuarioContrasena:user.usuarioContrasena,
+        usuarioNombre:user.usuarioNombre,
+        usuarioApellido:user.usuarioApellido,
+        tipoUsuarioId:user.tipoUsuarioId,
+        usuarioCorreo:user.usuarioCorreo,
+        telefono: user.telefono,
+        empresaDesc: user.empresaDesc,
+        empresaNumeroCuenta: user.empresaNumeroCuenta,
+        estadoUsuarioId: user.estadoUsuarioId,
+        empresaCuentaTipo: user.empresaCuentaTipo,
+        empresaBanco: user.empresaBanco,
         iat: moment().unix,
         exp: moment().add(1,'hour').unix()
     }

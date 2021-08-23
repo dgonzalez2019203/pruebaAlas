@@ -6,10 +6,7 @@ var conexion = configConexion.conexion;
 
 function listPedidos(req,res){
     var fecha = "2021-01-01"
-
     let query = 'call Sp_ListarPedido("'+fecha+'")';
-    console.log(query);
-
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"Error general"});
@@ -25,8 +22,20 @@ function listPedidosC(req,res){
     var userId = req.params.id;
 
     let query = 'call Sp_ListarPedidosCliente("'+userId+'")';
-    console.log(query);
+    conexion.query(query, (err, findPedidos)=>{
+        if(err){
+            res.send({message:"Error general"});
+        }else if(findPedidos){
+            res.send({message:"Pedidos encontrados", findPedidos});
+        }else{
+            res.send({message:"Aun no has hecho ningun pedido, te esperamos pronto"})
+        }
+    });
+}
 
+
+function listPedidosA(req,res){
+    let query = 'call Sp_ListarPedidosCliente("'+userId+'")';
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"Error general"});
@@ -42,8 +51,6 @@ function listPedidosCE(req,res){
     var userId = req.params.id;
 
     let query = 'call Sp_ListarPedidosClienteEspecial("'+userId+'")';
-    console.log(query);
-
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"Error general"});
@@ -59,8 +66,6 @@ function listPedidosM(req,res){
     var mensajeroId = req.params.id;
 
     let query = 'call Sp_ListarPedidoMensajero("'+mensajeroId+'")';
-    console.log(query);
-
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"Error general"});
@@ -76,8 +81,22 @@ function listPedidosME(req,res){
     var mensajeroId = req.params.id;
 
         let query = 'call Sp_ListarPedidoMensajeroEspecial("'+mensajeroId+'")';
-        console.log(query);
-    
+        conexion.query(query, (err, findPedidos)=>{
+            if(err){
+                res.send({message:"Error general"});
+            }else if(findPedidos){
+                res.send({message:"Pedidos encontrados", findPedidos});
+            }else{
+                res.send({message:"Aun no has hecho ningun pedido, te esperamos pronto"})
+            }
+        });    
+}
+
+
+function listPedidosEstado(req,res){
+    var estado = req.params.id;
+
+        let query = 'call Sp_ListarPedidoPorEstado("'+estado+'")';
         conexion.query(query, (err, findPedidos)=>{
             if(err){
                 res.send({message:"Error general"});
@@ -94,8 +113,6 @@ function listPedidosF(req,res){
 
     if(params.fechaBusqueda){
         let query = 'call Sp_ListarPedidoPorFecha("'+params.fechaBusqueda+'")';
-        console.log(query);
-    
         conexion.query(query, (err, findPedidos)=>{
             if(err){
                 res.send({message:"Error general"});
@@ -112,16 +129,43 @@ function listPedidosF(req,res){
 
 function confirmarPedido(req, res){
     var pedidoId = req.params.id;
-    var params = req.body;
+    var params = req.body;  
 
-    if(params.mensajero && params.costo && params.estado && params.monto && params.formaP && params.coment){
-        let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajero+'","'+params.costo+'","'+params.estado+'","'+params.monto+'","'+params.formaP+'","'+params.coment+'")';            
+    if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto && params.formaPagoId && params.pedidoDesc){
+        let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajerId+'","'+params.pedidoCosto+'","'+params.estado+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';            
 
         conexion.query(query, (err, pedidoUpdate)=>{
             if(err){
                 res.send({message:"error general"});
             }else if(pedidoUpdate){
                 res.send({message:"Pedido marcado como confirmado", pedidoUpdate});
+            }else{
+                res.send({message:"No se pudo actualizar la informacion"});
+            }
+        })
+    }else{
+        res.send({message:"Ingresa los campos obligatorios"});
+    }
+}
+
+
+function editarPedido(req, res){
+    var pedidoId = req.params.id;
+    var params = req.body;  
+    console.log(params.mensajerId);
+    console.log(params.pedidoCosto);
+    console.log(params.estado);
+    console.log(params.pedidoMonto);
+    console.log(params.formaPagoId);
+    console.log(params.pedidoDesc);
+    if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto && params.formaPagoId && params.pedidoDesc){
+        let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajerId+'","'+params.pedidoCosto+'","'+params.estado+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';            
+
+        conexion.query(query, (err, pedidoUpdate)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(pedidoUpdate){
+                res.send({message:"se ha editado el pedido de manera exitosa", pedidoUpdate});
             }else{
                 res.send({message:"No se pudo actualizar la informacion"});
             }
@@ -163,6 +207,21 @@ function getFormaPago(req,res){
             res.send({message:"Forma de pagos encontrados", formaPagos});
         }else{
             res.send({message:"no se ha econtrado forma de pagos"})
+        }
+    });
+}
+
+
+function getMensajero(req,res){
+    let query = 'call Sp_ListarMensajero()';
+        
+    conexion.query(query, (err, mensajeros)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(mensajeros){
+            res.send({message:"Mensajeros encontrados", mensajeros});
+        }else{
+            res.send({message:"no se ha econtrado mensajeros"})
         }
     });
 }
@@ -221,11 +280,25 @@ function savePedido(req, res){
                 }
             });
     }else{
-
+        return res.send({message:"ingrese los campos obligatorios"})
     }
 
 }
 
+function deletePedido(req,res){
+    var id = req.params.id;
+    let query = 'call Sp_EliminarPedido('+id+')';
+        
+    conexion.query(query, (err, pedidoDeleted)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(pedidoDeleted){
+            res.send({message:"Pedido eliminado exitosamente", pedidoDeleted});
+        }else{
+            res.send({message:"no se ha podido eliminar este pedido"})
+        }
+    });
+}
 
 
 module.exports ={
@@ -240,5 +313,9 @@ module.exports ={
     getFormaPago,
     getZonas,
     getZonasYFecha,
-    savePedido
+    savePedido,
+    getMensajero,
+    deletePedido,
+    editarPedido,
+    listPedidosEstado
 }
