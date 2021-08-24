@@ -22,7 +22,8 @@ function login(req,res){
         
         conexion.query(query1, (err, findUser)=>{
             if(err){
-                res.send({message:"error general"});
+                console.log(err);
+                res.send({message:"error general", err});
             }else if(findUser){
                 res.send({message:"Usuario logueado", findUser,token: jwt.createToken(findUser[0][0])});
             }else{
@@ -153,10 +154,148 @@ function passRecovery(req,res){
     }
 }
 
+
+function saveByAdmin(req,res){
+    var params = req.body;
+    if(params.userName, params.usuarioNombre, params.usuarioApellido, params.usuarioCorreo, params.usuarioContrasena, params.empresaDesc, params.empresaNumeroCuenta,
+        params.tipoUsuarioId, params.estadoUsuarioId, params.empresaCuentaTipo, params.empresaBanco, params.telefono){
+            let query1 = "SELECT * FROM Usuario WHERE userName = '"+params.userName+"' or usuarioCorreo='"+params.usuarioCorreo+"'";
+            conexion.query(query1, (err, userFind)=>{
+                if(err){
+                    console.log(err)
+                    return res.send({message:"error general"});
+                }else if(userFind){
+                    if(userFind.length == 0){
+                        let password = md5( params.usuarioContrasena);
+                        let query = 'call Sp_AgregarUsuario2("'+params.usuarioNombre+'","'+params.usuarioApellido+'","'+params.userName+'","'+password+'","'+params.usuarioCorreo+'","'+params.tipoUsuarioId+'","'+params.empresaDesc+'","'+params.empresaNumeroCuenta+'","'+params.empresaCuentaTipo+'","'+params.empresaBanco+'","'+params.telefono+'","'+params.estadoUsuarioId+'")';            
+                        conexion.query(query, (err, userSaved)=>{
+                            if(err){
+                                console.log(err)
+                                res.send({message:"error general"});
+                            }else if(userSaved){
+                                console.log(userSaved)
+                                res.send({message:"Usuario creado", userSaved});
+                            }else{
+                                res.send({message:"No se ha podido crear este usuario"})
+                            }
+                        });
+                    }else{
+                        return  res.send({message:"username o correo ya están en uso", userFind});
+                    }
+                   
+                }else{
+                    let password = md5( params.usuarioContrasena);
+                    let query = 'call Sp_AgregarUsuario2("'+params.usuarioNombre+'","'+params.usuarioApellido+'","'+params.userName+'","'+password+'","'+params.usuarioCorreo+'","'+params.tipoUsuarioId+'","'+params.empresaDesc+'","'+params.empresaNumeroCuenta+'","'+params.empresaCuentaTipo+'","'+params.empresaBanco+'","'+params.telefono+'","'+params.estadoUsuarioId+'")';            
+                    conexion.query(query, (err, userSaved)=>{
+                        if(err){
+                            console.log(err)
+                            res.send({message:"error general"});
+                        }else if(userSaved){
+                            console.log(userSaved)
+                            res.send({message:"Usuario creado", userSaved});
+                        }else{
+                            res.send({message:"No se ha podido crear este usuario"})
+                        }
+                    });
+                }
+            });
+
+    }else{
+        res.send({message:"Ingresa los campos obligatorios"});
+    }
+}
+
+function listUsuario(req,res){
+    let query1 = 'call ListUser()';
+        
+    conexion.query(query1, (err, usuarios)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(usuarios){
+            res.send({message:"usuarios encontrados", usuarios});
+        }else{
+            res.send({message:"no se han econtrado usuarios"})
+        }
+    });
+}
+
+
+function disableUser(req,res){
+    let id = req.params.id;
+
+    let query1 = 'call disableUser('+id+')';
+    console.log(query1)        
+    conexion.query(query1, (err, userDeleted)=>{
+        if(err){
+            res.status(500).send({message:"error general", err});
+        }else if(userDeleted){
+            res.send({message:"usuario Eliminado", userDeleted});
+        }else{
+            res.send({message:"no se han econtrado el usuario"})
+        }
+    });
+
+}
+
+function updateAccount(req,res){
+    let params = req.body;
+    let id = req.params.id;
+    let queryUpdate = 'call updateAccount('+id+',"'+params.usuarioNombre+'","'+params.usuarioApellido+'","'+params.userName+'","'+params.usuarioCorreo+'","'+params.empresaDesc+'","'+params.empresaNumeroCuenta+'",'+params.empresaCuentaTipo+','+params.empresaBanco+',"'+params.telefono+'")';
+    let query = 'select * from Usuario where Usuario.userName="'+params.userName+'"';
+    console.log(queryUpdate)
+    conexion.query(query, (err,userFind)=>{
+        if(err){
+            return res.status(500).send({message:"error general", err});
+        }else if(userFind){
+            if(userFind.length >0){
+                if(params.userid == userFind.userid){
+                    conexion.query(queryUpdate, (err,userUpdated)=>{
+                        if(err){
+                            console.log(err);
+                            return res.status(500).send({message:"error general", err});
+                        }else if(userUpdated){
+                            return res.send({message:"usuario Actualizado", userUpdated});
+                        }else{
+                            return res.send({message:"no se pudo actualizar el usuario"})
+                        }
+                    })
+                }else{
+                    return res.send({message:"username ya en uso..."});
+                }
+            }else{
+                conexion.query(queryUpdate, (err,userUpdated)=>{
+                    if(err){
+                        return res.status(500).send({message:"error general", err});
+                    }else if(userUpdated){
+                        return res.send({message:"usuario Actualizado", userUpdated});
+                    }else{
+                        return res.send({message:"no se pudo actualizar el usuario"})
+                    }
+                })
+            }
+        }else{
+            conexion.query(queryUpdate, (err,userUpdated)=>{
+                if(err){
+                    return res.status(500).send({message:"error general", err});
+                }else if(userUpdated){
+                    return res.send({message:"usuario Actualizado", userUpdated});
+                }else{
+                    return res.send({message:"no se pudo actualizar el usuario"})
+                }
+            })
+        }
+    })
+
+}
+
 module.exports ={
     login,
     register,
     getBancos,
     updateUser,
-    passRecovery
+    passRecovery,
+    saveByAdmin,
+    listUsuario,
+    disableUser,
+    updateAccount
 }

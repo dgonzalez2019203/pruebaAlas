@@ -25,5 +25,11 @@ api.put("/editarPedido/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedido
 api.put("/deletePedido/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.deletePedido);
 
 
+// CREDITOS
+
+api.get("buscarCredito/:usuarioId",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin], pedidosController.buscarCredito);
+api.put("setCredito/:creditoId/:pedidoId",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin], pedidosController.setCredito);
+api.post("addCredito/:usuarioId",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin],pedidosController.addCredito);
+api.post("addPedidoCredito/:creditoId/:pedidoId",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin],pedidosController.addPedidoCredito);
 
 module.exports = api;
