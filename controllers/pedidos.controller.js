@@ -131,7 +131,6 @@ function listPedidosF(req,res){
 function confirmarPedido(req, res){
     var pedidoId = req.params.id;
     var params = req.body;  
-
     if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto && params.formaPagoId && params.pedidoDesc){
         let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajerId+'","'+params.pedidoCosto+'","'+params.estado+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';            
 
@@ -321,10 +320,11 @@ function buscarCredito(req,res){
 function setCredito(req,res){
     var id = req.params.creditoId;
     var pedido = req.params.pedidoId;
-    let query = 'call agregarPedidoCredito('+id+','+pedido+')';
+    let query = 'call Sp_AgregarPedidoCredito('+id+','+pedido+')';
         
     conexion.query(query, (err, creditoUpdated)=>{
         if(err){
+            console.log(err)
             res.send({message:"error general"});
         }else if(creditoUpdated){
             res.send({message:"se ha actualizado el credito con exito", creditoUpdated});
@@ -357,9 +357,10 @@ function addPedidoCredito(req,res){
     var id = req.params.creditoId;
     var pedido = req.params.pedidoId;
     let query = 'call Sp_AgregarPedidoCredito('+id+','+pedido+')';
-        
+        console.log(query)
     conexion.query(query, (err, creditoAdd)=>{
         if(err){
+            console.log(err);
             res.send({message:"error general"});
         }else if(creditoAdd){
             res.send({message:"se ha actualizado el credito con exito", creditoAdd});
