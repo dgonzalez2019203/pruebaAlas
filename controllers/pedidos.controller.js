@@ -10,6 +10,7 @@ function listPedidos(req,res){
     let query = 'call Sp_ListarPedido("'+fecha+'")';
     conexion.query(query, (err, findPedidos)=>{
         if(err){
+            console.log("hola mundo err")
             res.send({message:"Error general"});
         }else if(findPedidos){
             res.send({message:"Pedidos encontrados", findPedidos});
@@ -339,9 +340,77 @@ function removePedido(req,res){
     })
 }
 
+function buscarCredito(req,res){
+    var id = req.params.usuarioId;
+    let query = 'call Sp_buscarCredito1('+id+')';
+        
+    conexion.query(query, (err, pedidoCredito)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(pedidoCredito){
+            res.send({message:"creditos encontrados:", pedidoCredito});
+        }else{
+            res.send({message:"no hay registros de creditos"})
+        }
+    });
+}
 function savePedidoEspecial(req,res){
     var userId = req.params.id;
     var params = req.body;
+
+
+
+function setCredito(req,res){
+    var id = req.params.creditoId;
+    var pedido = req.params.pedidoId;
+    let query = 'call agregarPedidoCredito('+id+','+pedido+')';
+        
+    conexion.query(query, (err, creditoUpdated)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(creditoUpdated){
+            res.send({message:"se ha actualizado el credito con exito", creditoUpdated});
+        }else{
+            res.send({message:"no se ha podido actualizar el credito"})
+        }
+    });
+}
+
+
+
+
+function addCredito(req,res){
+    var id = req.params.usuarioId;
+    let query = 'call Sp_AgregarCredito('+id+')';
+        
+    conexion.query(query, (err, creditoAdd)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(creditoAdd){
+            res.send({message:"se ha actualizado el credito con exito", creditoAdd});
+        }else{
+            res.send({message:"no se ha podido actualizar el credito"})
+        }
+    });
+}
+
+
+function addPedidoCredito(req,res){
+    var id = req.params.creditoId;
+    var pedido = req.params.pedidoId;
+    let query = 'call Sp_AgregarPedidoCredito('+id+','+pedido+')';
+        
+    conexion.query(query, (err, creditoAdd)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(creditoAdd){
+            res.send({message:"se ha actualizado el credito con exito", creditoAdd});
+        }else{
+            res.send({message:"no se ha podido actualizar el credito"})
+        }
+    });
+}
+
 
     if(params.pedidoDesc && params.pedidoFecha){
         let query = 'call Sp_AgregarPedidoEspecial("'+userId+'","'+params.pedidoDesc+'","'+params.pedidoFecha+'")';
@@ -442,6 +511,13 @@ module.exports ={
     listPedidosEstado,
     editarPedido,
     getMensajero,
+    deletePedido,
+    editarPedido,
+    listPedidosEstado,
+    buscarCredito,
+    setCredito,
+    addCredito,
+    addPedidoCredito
     removePedido,
     updatePedidoM,
     updatePedidoME,

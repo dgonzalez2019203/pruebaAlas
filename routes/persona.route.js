@@ -12,4 +12,10 @@ api.get("/getBancos",userController.getBancos);
 api.post("/updateUser/:id",userController.updateUser);
 api.post("/passRecovery/:id",userController.passRecovery);
 
+api.post("/saveByAdmin",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],userController.saveByAdmin);
+api.get("/listUsuario",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],userController.listUsuario);
+api.put("/deleteUser/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],userController.disableUser);
+api.put("/updateAccount/:id",[mdAuth.enshureAuth],userController.updateAccount);
+
+
 module.exports = api;

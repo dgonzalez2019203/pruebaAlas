@@ -29,6 +29,12 @@ api.put("/cancelPedidoAdmin/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],p
 api.put("/updatePedidoM/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthCliente],pedidosController.updatePedidoM);
 api.put("/updatePedidoME/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthCliente],pedidosController.updatePedidoME);
 
+// CREDITOS
+
+api.get("buscarCredito/:usuarioId",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin], pedidosController.buscarCredito);
+api.put("setCredito/:creditoId/:pedidoId",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin], pedidosController.setCredito);
+api.post("addCredito/:usuarioId",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin],pedidosController.addCredito);
+api.post("addPedidoCredito/:creditoId/:pedidoId",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin],pedidosController.addPedidoCredito);
 
 
 /*Usuario*/
