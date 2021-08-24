@@ -22,10 +22,9 @@ function login(req,res){
         
         conexion.query(query1, (err, findUser)=>{
             if(err){
-                console.log(err);
-                res.send({message:"error general", err});
+                res.send({message:"error general"});
             }else if(findUser){
-                res.send({message:"Usuario logueado", findUser});
+                res.send({message:"Usuario logueado", findUser,token: jwt.createToken(findUser[0][0])});
             }else{
                 res.send({message:"no se ha econtrado un usuario con este usuario o password"})
             }
@@ -288,6 +287,25 @@ function updateAccount(req,res){
 
 }
 
+function confirmarCorreo(req,res){
+    let params = req.body;
+
+    if(params.estadoUsuarioId && params.usuarioCorreo){
+        let query = 'call Sp_ConfirmarCorreo("'+params.estadoUsuarioId+'","'+params.usuarioCorreo+'")'; 
+        conexion.query(query, (err,confirmar)=>{
+            if(err){
+                return res.status(500).send({message:"error general", err});
+            }else if(confirmar){
+                return res.send({message:"Correo confirmado", confirmar});
+            }else{
+                return res.send({message:"no se pudo confirmar al usuario"})
+            }
+        })
+    }else{
+        return res.send({message:"Ingresa los campos obligatorios"})
+    }
+}
+
 module.exports ={
     login,
     register,
@@ -297,5 +315,6 @@ module.exports ={
     saveByAdmin,
     listUsuario,
     disableUser,
-    updateAccount
+    updateAccount,
+    confirmarCorreo
 }

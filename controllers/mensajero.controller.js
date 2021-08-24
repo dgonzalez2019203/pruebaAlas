@@ -37,28 +37,44 @@ function saveMensajero(req,res){
 
     if(params.primerNombreMensajero && params.segundoNombreMensajero && params.primerApellidoMensajero && params.segundoApellidoMensajero && params.usuarioId && params.dpiMensajero
         && params.placasMensajero && params.telefonoMensajero && params.direccionMensajero && params.estadoCivil){
-            let query = "SELECT * FROM Mensajero WHERE dpiMensajero = '"+params.dpiMensajero+"' or telefonoMensajero='"+params.telefonoMensajero+"'";
            
-            conexion.query(query, (err, mensajeroFind)=>{
+            let query1 = "SELECT * FROM Mensajero WHERE dpiMensajero = '"+params.dpiMensajero+"' or telefonoMensajero='"+params.telefonoMensajero+"'";
+
+            conexion.query(query1, (err, mensajeroFind)=>{
                 if(err){
-                    res.send({message:"Error general"});
+                    return res.send({message:"error general"});
                 }else if(mensajeroFind){
-                    res.send({message:"Numero de DPI o Telefono ya están en uso", mensajeroFind});
+                    if(mensajeroFind == ""){
+                        let queryAdd = 'call Sp_AgregarDatos("'+params.primerNombreMensajero+'","'+params.segundoNombreMensajero+'","'+params.primerApellidoMensajero+'","'+params.segundoApellidoMensajero+'","'+params.usuarioId+'","'+params.dpiMensajero+'","'+params.placasMensajero+'","'+params.telefonoMensajero+'","'+params.direccionMensajero+'","'+params.estadoCivil+'")';            
+
+                        conexion.query(queryAdd, (err, mensajeroSaved)=>{
+                            if(err){
+                                return res.send({message:"error general"});
+                            }else if(mensajeroSaved){
+                                return res.send({message:"Mensajero creado", mensajeroSaved});
+                            }else{
+                                return res.send({message:"No se ha podido crear este mensajero"})
+                            }
+                        });
+                    }else{
+                        return  res.send({message:"DPI o Numero de telefono ya en uso", mensajeroFind});
+                    }
                 }else{
                     let queryAdd = 'call Sp_AgregarDatos("'+params.primerNombreMensajero+'","'+params.segundoNombreMensajero+'","'+params.primerApellidoMensajero+'","'+params.segundoApellidoMensajero+'","'+params.usuarioId+'","'+params.dpiMensajero+'","'+params.placasMensajero+'","'+params.telefonoMensajero+'","'+params.direccionMensajero+'","'+params.estadoCivil+'")';            
 
                     conexion.query(queryAdd, (err, mensajeroSaved)=>{
                         if(err){
-                            res.send({message:"error general"});
+                            return res.send({message:"error general"});
                         }else if(mensajeroSaved){
-                            res.send({message:"Mensajero creado", mensajeroSaved});
+                            return res.send({message:"Mensajero creado", mensajeroSaved});
                         }else{
-                            res.send({message:"No se ha podido crear este mensajero"})
+                            return res.send({message:"No se ha podido crear este mensajero"})
                         }
                     });
                 }
             });
-
+        }else{
+            res.send({message:"Ingresa los campos obligatorios"});
         }
 }
 
