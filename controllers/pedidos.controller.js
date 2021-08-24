@@ -357,7 +357,21 @@ function buscarCredito(req,res){
 function savePedidoEspecial(req,res){
     var userId = req.params.id;
     var params = req.body;
-
+    if(params.pedidoDesc && params.pedidoFecha){
+        let query = 'call Sp_AgregarPedidoEspecial("'+userId+'","'+params.pedidoDesc+'","'+params.pedidoFecha+'")';
+        conexion.query(query, (err, pedidoSaved)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(pedidoSaved){
+                res.send({message:"Pedido especial creado exitosamente"})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Envia los datos minimos para la creacion de tu pedido"})
+    }
+}
 
 
 function setCredito(req,res){
@@ -411,22 +425,6 @@ function addPedidoCredito(req,res){
     });
 }
 
-
-    if(params.pedidoDesc && params.pedidoFecha){
-        let query = 'call Sp_AgregarPedidoEspecial("'+userId+'","'+params.pedidoDesc+'","'+params.pedidoFecha+'")';
-        conexion.query(query, (err, pedidoSaved)=>{
-            if(err){
-                res.send({message:"error general"});
-            }else if(pedidoSaved){
-                res.send({message:"Pedido especial creado exitosamente"})
-            }else{
-                res.send({message:"Pedido no encontrado"})
-            }
-        })
-    }else{
-        res.send({message:"Envia los datos minimos para la creacion de tu pedido"})
-    }
-}
 
 function cancelPedido(req,res){
     var pedidoId = req.params.id;
@@ -511,16 +509,14 @@ module.exports ={
     listPedidosEstado,
     editarPedido,
     getMensajero,
-    deletePedido,
     editarPedido,
     listPedidosEstado,
     buscarCredito,
     setCredito,
     addCredito,
-    addPedidoCredito
-    removePedido,
+    addPedidoCredito,
+    cancelPedidoAdmin,
     updatePedidoM,
     updatePedidoME,
-    cancelPedido,
-    cancelPedidoAdmin
+    cancelPedido
 }
