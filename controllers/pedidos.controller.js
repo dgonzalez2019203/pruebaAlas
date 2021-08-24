@@ -1,6 +1,7 @@
 'use strict'
 var mysql = require("mysql")
 var configConexion =  require("../config/conexion");
+const { param } = require("../routes/pedidos.route");
 var conexion = configConexion.conexion;
 
 
@@ -128,6 +129,8 @@ function listPedidosF(req,res){
     }
 }
 
+
+/* Funciones de admin*/
 function confirmarPedido(req, res){
     var pedidoId = req.params.id;
     var params = req.body;  
@@ -152,12 +155,7 @@ function confirmarPedido(req, res){
 function editarPedido(req, res){
     var pedidoId = req.params.id;
     var params = req.body;  
-    console.log(params.mensajerId);
-    console.log(params.pedidoCosto);
-    console.log(params.estado);
-    console.log(params.pedidoMonto);
-    console.log(params.formaPagoId);
-    console.log(params.pedidoDesc);
+
     if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto && params.formaPagoId && params.pedidoDesc){
         let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajerId+'","'+params.pedidoCosto+'","'+params.estado+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';            
 
@@ -263,13 +261,55 @@ function getZonasYFecha(req,res){
     }
 }
 
+
+function savePedidoCredito(req,res){
+    var pedidoId = req.params.id;
+    var creditoId = req.params.idC;
+
+    let query = 'call Sp_AgregarPedidoCredito("'+creditoId+'","'+pedidoId+'")';
+
+    conexion.query(query, (err, pedidoSaved)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(pedidoSaved){
+            res.send({message:"Credito asignado exitosamente"})
+        }else{
+            res.send({message:"Pedido no encontrado"})
+        }
+    })
+}
+
+function cancelPedidoAdmin(req,res){
+    var params = req.body;
+    var pedidoId = req.params.id;
+
+    if(params.pedidoEstadoId && params.pedidoFecha){
+        let query = 'call Sp_CancelarPedidoAdmin("'+pedidoId+'","'+params.pedidoEstadoId+'","'+params.pedidoFecha+'")';
+        conexion.query(query, (err, cancel)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(cancel){
+                res.send({message:"Pedido cancelado exitosamente"})
+            }else{
+                res.send({message:"El pedido no se pudo cancelar"})
+            }
+        })
+    }else{
+        res.send({message:"Envia los datos minimos para poder hacer la cancelacion."})
+    }
+}
+
+
+
+/* Funciones de usuario normal*/
 function savePedido(req, res){
     var params = req.body;
+    var pedidoId = req.params.id;
 
     if(params.pedidoPuntoInicio && params.pedidoDireccionInicio && params.pedidoPuntoFinal && params.pedidoDireccionFinal && params.pedidoUsuarioId
         && params.pedidoTelefonoReceptor && params.pedidoCosto && params.pedidoMonto && params.nombreReceptor && params.pedidoDesc && params.pedidoFecha){
 
-            let query = 'call Sp_ConfirmarPedido("'+params.pedidoPuntoInicio+'","'+params.pedidoDireccionInicio+'","'+params.pedidoPuntoFinal+'","'+params.pedidoDireccionFinal+'","'+params.pedidoUsuarioId+'","'+params.pedidoTelefonoReceptor+'","'+params.pedidoCosto+'","'+params.pedidoMonto+'","'+params.nombreReceptor+'","'+params.params.pedidoDesc+'","'+params.params.pedidoFecha+'")';            
+            let query = 'call Sp_AgregarPedido("'+pedidoId+'","'+params.params.pedidoFecha+'","'+params.pedidoPuntoInicio+'","'+params.pedidoDireccionInicio+'","'+params.pedidoPuntoFinal+'","'+params.pedidoDireccionFinal+'","'+userId+'","'+params.pedidoTelefonoReceptor+'","'+params.pedidoCosto+'","'+params.pedidoMonto+'","'+params.nombreReceptor+'","'+params.pedidoDesc+'")';            
             conexion.query(query, (err, pedidoSaved)=>{
                 if(err){
                     res.send({message:"error general"});
@@ -282,22 +322,21 @@ function savePedido(req, res){
     }else{
         return res.send({message:"ingrese los campos obligatorios"})
     }
-
 }
 
-function deletePedido(req,res){
-    var id = req.params.id;
-    let query = 'call Sp_EliminarPedido('+id+')';
-        
-    conexion.query(query, (err, pedidoDeleted)=>{
+function removePedido(req,res){
+    var pedidoId = req.params.id;
+    let query = 'call Sp_EliminarPedido("'+ pedidoId +'")';            
+
+    conexion.query(query, (err, pedidoRemoved)=>{
         if(err){
             res.send({message:"error general"});
-        }else if(pedidoDeleted){
-            res.send({message:"Pedido eliminado exitosamente", pedidoDeleted});
+        }else if(pedidoRemoved){
+            res.send({message:"Pedido eliminado exitosamente"})
         }else{
-            res.send({message:"no se ha podido eliminar este pedido"})
+            res.send({message:"Pedido no encontrado"})
         }
-    });
+    })
 }
 
 function buscarCredito(req,res){
@@ -314,7 +353,24 @@ function buscarCredito(req,res){
         }
     });
 }
-
+function savePedidoEspecial(req,res){
+    var userId = req.params.id;
+    var params = req.body;
+    if(params.pedidoDesc && params.pedidoFecha){
+        let query = 'call Sp_AgregarPedidoEspecial("'+userId+'","'+params.pedidoDesc+'","'+params.pedidoFecha+'")';
+        conexion.query(query, (err, pedidoSaved)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(pedidoSaved){
+                res.send({message:"Pedido especial creado exitosamente"})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Envia los datos minimos para la creacion de tu pedido"})
+    }
+}
 
 
 function setCredito(req,res){
@@ -371,6 +427,70 @@ function addPedidoCredito(req,res){
 }
 
 
+function cancelPedido(req,res){
+    var pedidoId = req.params.id;
+    var params = req.body;
+
+    if(params.pedidoEstadoId && params.comentarioMensajero && params.pedidoFecha && params.pedidoCosto && params.pedidoMonto){
+        let query = 'call Sp_CancelarPedido("'+pedidoId+'","'+params.pedidoEstadoId+'","'+params.comentarioMensajero+'","'+params.pedidoFecha+'","'+params.pedidoCosto+'","'+params.pedidoMonto+'")';
+        conexion.query(query, (err, cancel)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(cancel){
+                res.send({message:"Pedido cancelado exitosamente"})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Envia los datos minimos para la cancelacion de tu pedido"})
+    }
+}
+
+/* Funciones de mensajero*/
+function updatePedidoM(req,res){
+    var pedidoId = req.params.id;
+    var params = req.body;
+    
+    if(params.pedidoDireccionFinal && params.pedidoMonto){
+        let query = 'call SpEditarPedidoMensajero("'+pedidoId+'","'+params.pedidoMonto+'","'+params.pedidoDireccionFinal+'")';
+        conexion.query(query, (err, updatePedido)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(updatePedido){
+                res.send({message:"Pedido especial creado exitosamente"})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Tienes que enviar todos los datos para poder actualizar el pedido"})        
+    }
+
+}
+
+function updatePedidoME(req,res){
+    var pedidoId = req.params.id;
+    var params = req.body;
+    
+    if(params.pedidoDireccionFinal && params.pedidoMonto){
+        let query = 'call SpEditarPedidoMensajeroEspecial("'+pedidoId+'","'+params.pedidoMonto+'","'+params.pedidoMontoCosto+'")';
+        conexion.query(query, (err, updatePedido)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(updatePedido){
+                res.send({message:"Pedido especial creado exitosamente"})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Tienes que enviar todos los datos para poder actualizar el pedido"})        
+    }
+
+}
+
+
 module.exports ={
     listPedidosC,
     listPedidosCE,
@@ -384,12 +504,20 @@ module.exports ={
     getZonas,
     getZonasYFecha,
     savePedido,
+    removePedido,
+    savePedidoCredito,
+    savePedidoEspecial,
+    listPedidosEstado,
+    editarPedido,
     getMensajero,
-    deletePedido,
     editarPedido,
     listPedidosEstado,
     buscarCredito,
     setCredito,
     addCredito,
-    addPedidoCredito
+    addPedidoCredito,
+    cancelPedidoAdmin,
+    updatePedidoM,
+    updatePedidoME,
+    cancelPedido
 }

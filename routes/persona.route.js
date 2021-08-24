@@ -16,6 +16,7 @@ api.post("/saveByAdmin",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],userContro
 api.get("/listUsuario",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],userController.listUsuario);
 api.put("/deleteUser/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],userController.disableUser);
 api.put("/updateAccount/:id",[mdAuth.enshureAuth],userController.updateAccount);
+api.put("/confirmarCorreo",[mdAuth.enshureAuth],userController.confirmarCorreo);
 
 
 module.exports = api;
