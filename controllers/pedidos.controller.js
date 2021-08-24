@@ -1,6 +1,7 @@
 'use strict'
 var mysql = require("mysql")
 var configConexion =  require("../config/conexion");
+const { param } = require("../routes/pedidos.route");
 var conexion = configConexion.conexion;
 
 
@@ -154,12 +155,7 @@ function confirmarPedido(req, res){
 function editarPedido(req, res){
     var pedidoId = req.params.id;
     var params = req.body;  
-    console.log(params.mensajerId);
-    console.log(params.pedidoCosto);
-    console.log(params.estado);
-    console.log(params.pedidoMonto);
-    console.log(params.formaPagoId);
-    console.log(params.pedidoDesc);
+
     if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto && params.formaPagoId && params.pedidoDesc){
         let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajerId+'","'+params.pedidoCosto+'","'+params.estado+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';            
 
@@ -283,6 +279,26 @@ function savePedidoCredito(req,res){
     })
 }
 
+function cancelPedidoAdmin(req,res){
+    var params = req.body;
+    var pedidoId = req.params.id;
+
+    if(params.pedidoEstadoId && params.pedidoFecha){
+        let query = 'call Sp_CancelarPedidoAdmin("'+pedidoId+'","'+params.pedidoEstadoId+'","'+params.pedidoFecha+'")';
+        conexion.query(query, (err, cancel)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(cancel){
+                res.send({message:"Pedido cancelado exitosamente"})
+            }else{
+                res.send({message:"El pedido no se pudo cancelar"})
+            }
+        })
+    }else{
+        res.send({message:"Envia los datos minimos para poder hacer la cancelacion."})
+    }
+}
+
 
 
 /* Funciones de usuario normal*/
@@ -310,7 +326,6 @@ function savePedido(req, res){
 
 function removePedido(req,res){
     var pedidoId = req.params.id;
-
     let query = 'call Sp_EliminarPedido("'+ pedidoId +'")';            
 
     conexion.query(query, (err, pedidoRemoved)=>{
@@ -344,11 +359,68 @@ function savePedidoEspecial(req,res){
     }
 }
 
+function cancelPedido(req,res){
+    var pedidoId = req.params.id;
+    var params = req.body;
 
+    if(params.pedidoEstadoId && params.comentarioMensajero && params.pedidoFecha && params.pedidoCosto && params.pedidoMonto){
+        let query = 'call Sp_CancelarPedido("'+pedidoId+'","'+params.pedidoEstadoId+'","'+params.comentarioMensajero+'","'+params.pedidoFecha+'","'+params.pedidoCosto+'","'+params.pedidoMonto+'")';
+        conexion.query(query, (err, cancel)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(cancel){
+                res.send({message:"Pedido cancelado exitosamente"})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Envia los datos minimos para la cancelacion de tu pedido"})
+    }
+}
 
 /* Funciones de mensajero*/
+function updatePedidoM(req,res){
+    var pedidoId = req.params.id;
+    var params = req.body;
+    
+    if(params.pedidoDireccionFinal && params.pedidoMonto){
+        let query = 'call SpEditarPedidoMensajero("'+pedidoId+'","'+params.pedidoMonto+'","'+params.pedidoDireccionFinal+'")';
+        conexion.query(query, (err, updatePedido)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(updatePedido){
+                res.send({message:"Pedido especial creado exitosamente"})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Tienes que enviar todos los datos para poder actualizar el pedido"})        
+    }
 
+}
 
+function updatePedidoME(req,res){
+    var pedidoId = req.params.id;
+    var params = req.body;
+    
+    if(params.pedidoDireccionFinal && params.pedidoMonto){
+        let query = 'call SpEditarPedidoMensajeroEspecial("'+pedidoId+'","'+params.pedidoMonto+'","'+params.pedidoMontoCosto+'")';
+        conexion.query(query, (err, updatePedido)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(updatePedido){
+                res.send({message:"Pedido especial creado exitosamente"})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Tienes que enviar todos los datos para poder actualizar el pedido"})        
+    }
+
+}
 
 
 module.exports ={
@@ -366,5 +438,13 @@ module.exports ={
     savePedido,
     removePedido,
     savePedidoCredito,
-    savePedidoEspecial
+    savePedidoEspecial,
+    listPedidosEstado,
+    editarPedido,
+    getMensajero,
+    removePedido,
+    updatePedidoM,
+    updatePedidoME,
+    cancelPedido,
+    cancelPedidoAdmin
 }
