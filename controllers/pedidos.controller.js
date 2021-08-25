@@ -339,20 +339,7 @@ function removePedido(req,res){
     })
 }
 
-function buscarCredito(req,res){
-    var id = req.params.usuarioId;
-    let query = 'call Sp_buscarCredito1('+id+')';
-        
-    conexion.query(query, (err, pedidoCredito)=>{
-        if(err){
-            res.send({message:"error general"});
-        }else if(pedidoCredito){
-            res.send({message:"creditos encontrados:", pedidoCredito});
-        }else{
-            res.send({message:"no hay registros de creditos"})
-        }
-    });
-}
+
 function savePedidoEspecial(req,res){
     var userId = req.params.id;
     var params = req.body;
@@ -372,6 +359,20 @@ function savePedidoEspecial(req,res){
     }
 }
 
+function buscarCredito(req,res){
+    var id = req.params.usuarioId;
+    let query = 'call Sp_buscarCredito1('+id+')';
+        
+    conexion.query(query, (err, pedidoCredito)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(pedidoCredito){
+            res.send({message:"creditos encontrados:", pedidoCredito});
+        }else{
+            res.send({message:"no hay registros de creditos"})
+        }
+    });
+}
 
 function setCredito(req,res){
     var id = req.params.creditoId;
@@ -425,6 +426,54 @@ function addPedidoCredito(req,res){
         }
     });
 }
+
+function listCreditos(req,res){
+    let query = 'call Sp_ListarCredito()';
+
+    conexion.query(query, (err, creditosFind)=>{
+        if(err){
+            console.log(err);
+            res.send({message:"error general"});
+        }else if(creditosFind){
+            res.send({message:"Creditos registrados:", creditosFind});
+        }else{
+            res.send({message:"no se han encontrado creditos"})
+        }
+    });
+}
+
+function confirmarCredito(req,res){
+    var id = req.params.id;
+    let query = 'call Sp_ConfirmarPedidoCredito('+id+')';
+
+    conexion.query(query, (err, creditoConfirm)=>{
+        if(err){
+            console.log(err);
+            res.send({message:"error general"});
+        }else if(creditoConfirm){
+            res.send({message:"Creditos registrados:", creditoConfirm});
+        }else{
+            res.send({message:"no se han encontrado creditos"})
+        }
+    });
+}
+
+function listarCreditosDesc(req,res){
+    var id = req.params.id;
+    let query = 'call Sp_ListarPedidoCredito('+id+')';
+
+    conexion.query(query, (err, creditosFind)=>{
+        if(err){
+            console.log(err);
+            res.send({message:"error general"});
+        }else if(creditosFind){
+            res.send({message:"Creditos registrados:", creditosFind});
+        }else{
+            res.send({message:"no se han encontrado creditos"})
+        }
+    });
+}
+
 
 
 function cancelPedido(req,res){
@@ -519,5 +568,8 @@ module.exports ={
     cancelPedidoAdmin,
     updatePedidoM,
     updatePedidoME,
-    cancelPedido
+    cancelPedido,
+    listCreditos,
+    listarCreditosDesc,
+    confirmarCredito
 }
