@@ -7,6 +7,8 @@ var bodyParser = require("body-parser");
 var app= express();
 
 var userRoutes = require("./routes/persona.route");
+var pedidosRoutes = require("./routes/pedidos.route");
+var mensajeroRoutes = require("./routes/mensajero.route");
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
@@ -20,5 +22,7 @@ app.use((req, res, next)=>{
 });
 
 app.use("/alasgt",userRoutes);
+app.use("/alasgt",pedidosRoutes);
+app.use("/alasgt",mensajeroRoutes);
 
 module.exports = app;

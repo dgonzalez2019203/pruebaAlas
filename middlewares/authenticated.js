@@ -5,10 +5,11 @@ var jwt = require("jwt-simple");
 var moment = require("moment");
 
 
-var secretKey = "alasgt2021";
+var secretKey = "AlasGt2021";
 
 exports.enshureAuth = (req,res,next)=>{
     if(!req.headers.authorization){
+        
         return res.status(403).send({message:"La petición no tiene cabecera de autenticación"});
     }else{
         var token =req.headers.authorization.replace(/['"']+/g,'');
@@ -28,7 +29,7 @@ exports.enshureAuth = (req,res,next)=>{
 
 exports.enshureAuthAdmin = (req,res,next)=>{
     var payload = req.user;
-    if(payload.role != "ROLE_ADMIN"){
+    if(payload.tipoUsuarioId != "1" || payload.tipoUsuarioId == undefined){
         return res.status(404).send({message:"no tienes permiso para acceder a esta ruta"});
     }else{
         next();
@@ -37,7 +38,7 @@ exports.enshureAuthAdmin = (req,res,next)=>{
 
 exports.enshureAuthCliente = (req,res,next)=>{
     var payload = req.user;
-    if(payload.role != "ROLE_CLIENTE"){
+    if(payload.tipoUsuarioId != "2"){
         return res.status(404).send({message:"no tienes permiso para acceder a esta ruta"});
     }else{
         next();
