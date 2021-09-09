@@ -1,0 +1,539 @@
+@font-face{
+      font-family: Cream Cake;
+      src: url("../assets/fonts/Cream\ Cake.ttf");
+  }
+  
+  @font-face{
+      font-family: fa-regular-400;
+      src: url("../assets/fonts/fa-regular-400.ttf");
+  }
+  
+  @font-face{
+      font-family: fa-brands-400;
+      src: url("../assets/fonts/fa-brands-400.ttf");
+  }
+  @font-face{
+      font-family: fa-solid-900;
+      src: url("../assets/fonts/fa-solid-900.ttf");
+  }
+  @font-face{
+    font-family: Berlin Sans FB;
+    src: url("../assets/fonts/Berlin\ Sans\ FB\ Regular.ttf");
+}
+  @keyframes floating { 
+      0% { transform: translate(0,  0px); } 
+      50%  { transform: translate(0, 10px); } 
+      100%   { transform: translate(0, -0px); }     
+  } 
+  
+  @keyframes slide { 
+      0% { transform: translate(0,  -505px); } 
+      100%   { transform: translate(0, 0px); }     
+  }
+  
+  @keyframes moto { 
+      5% { transform: rotate(-45deg) }
+      97% { transform: translate(80vw,0px);}
+      98% {transform:translateX(0)}
+      99% {opacity: 0%;}
+      100% {opacity: 100%;}
+  } 
+  
+
+  :root{
+    --color: #0f367b;
+    --color2:  #154daf; 
+  }
+  
+  
+  html{
+    min-height: 100%;
+  }
+  
+  body{
+    background-color: #0f367b;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+  }
+  section{
+    height:  60vh;
+  }
+  .contenedor{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .tamaño{
+    font-size: 3vh;
+  }
+  .tamaño1{
+      font-size: 17px;
+    }
+  .ancho-20{
+      width: 20% !important;
+  }
+  .ancho-30{
+      width: 30% !important;
+  }
+  .ancho-40{
+      width: 40% !important;
+  }
+  .ancho-77{
+      width: 63% !important;
+  }
+  .ancho-50{
+      width: 50% !important;
+  }
+  .ancho-60{
+      width: 60% !important;
+  }
+  .w-60{
+      width: 60% !important;
+  }
+  .w-40{
+      width: 40% !important;        
+  }
+  .justify-content-flex-end{
+      justify-content: flex-end;
+  }
+  .imagen_derecha{
+      z-index: 0;
+      width: 25%;
+      height: 15%;
+      position: absolute;
+      top: 77px;
+      animation-name: floating;
+      animation-duration: 3s;
+      animation-iteration-count: infinite;
+  
+    
+  }
+  
+  .imagen_izquierda{
+      z-index: 0;
+      position: absolute;
+      bottom: 40px;
+      right: 0;
+      width: 25%;
+      animation-name: floating;
+      animation-duration: 3s;
+      animation-iteration-count: infinite;
+  }
+  
+  
+  .animationxs{
+      cursor: pointer;
+      animation-name: moto;
+      animation-duration: 4s;
+      animation-iteration-count: 1;
+  }
+  
+  .moto.animationx{
+      cursor: pointer;
+      animation-name: moto;
+      animation-duration: 4s;
+      animation-iteration-count: 1;
+  }
+  .titulos{
+      font-family: Cream Cake;
+      font-size: 11vh;
+      color: #707070;
+  }
+  
+  .centrado{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .centrado1{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+  .imagen{
+      width: 74%;
+  }
+  .menu{
+      background-color: black !important;
+  }
+  .icono{
+      font-family: fa-regular-400;
+      padding-right: 7px;
+      color: var(--color);
+  }
+  .iconoBrands{
+      font-family: fa-brands-400;
+      color: var(--color);
+  }
+  .iconoSolid{
+      font-family: fa-solid-900;
+      padding-right: 7px;
+      color: var(--color);
+  }
+  
+a{
+      font-family: Berlin sans FB;
+  }
+  
+  .fuente-color{
+      font-family: Berlin sans FB !important;
+      color: white !important;
+  }
+  
+.panel{
+      background-color: white;
+      margin: 15px;
+      border-radius: 16px;
+      opacity: 90%; 
+  }
+  
+  .panel1{
+      animation: slide 3s 1;
+  }
+  .panel2{
+      animation: slide 4s 1;
+  }
+  
+  .panel3{
+      animation: slide 5s 1;
+  }
+  
+  .panel:hover{
+      cursor: pointer;
+      border-color: var(--color2);
+      box-shadow: 0 1px 1px white inset, 0 0 8px var(--color2);
+      outline: 0 none;
+  }
+  
+  .inicio-cliente{
+      color: #000 !important;
+      font-size: 5vw;
+  }
+  
+  .letra{
+      color: #000;
+      font-size: 19px;
+      font-family: Berlin sans FB;
+      
+  }
+
+  .galeria{
+      padding: 20px;
+      opacity: 90%;
+      margin-bottom: 15px;
+  }
+  
+  .activado{
+      height: 100%;
+      width: 100%;
+      position: fixed;
+      right: 0;
+      top: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+  }
+  .desactivado{
+      display: none;
+  }
+  
+  .contenedor{
+      position: relative;
+      animation-name: slide;
+      animation-duration: 3s, 5s;
+      
+      animation-iteration-count: 1;
+  }  
+  .contenedor:hover .texto-imagen-activado{
+      bottom: 0;
+      height: 100%;
+  }
+  .text {
+      white-space: nowrap; 
+      color: white;
+      font-size: 20px;
+      position: absolute;
+      overflow: hidden;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+}
+.drop-content-black {
+  background-color: black !important;
+}
+.drop-content-black a{
+  background-color: black !important;
+}
+.dropdown-content-black a:hover {
+  background-color: #424242 !important;
+  color: white;
+}
+/*boton*/
+.custom-btn {
+      width: 130px;
+      height: 40px;
+      color: #fff;
+      border-radius: 5px;
+      padding: 10px 25px;
+      font-family: 'Lato', sans-serif;
+      font-weight: 500;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      display: inline-block;
+       box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
+       7px 7px 20px 0px rgba(0,0,0,.1),
+       4px 4px 5px 0px rgba(0,0,0,.1);
+      outline: none;
+    }
+    button {
+      margin: 20px;
+    }
+  
+  .btn-3 {
+      background: rgb(91, 62, 179);
+    background: linear-gradient(0deg, var(--color) 0%, var(--color2) 100%);
+      width: 130px;
+      height: 40px;
+      line-height: 42px;
+      padding: 0;
+      border: none;
+      
+    }
+    .btn-3 span {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .btn-3:before,
+    .btn-3:after {
+      position: absolute;
+      content: "";
+      right: 0;
+      top: 0;
+       background: var(--color);
+      transition: all 0.3s ease;
+    }
+    .btn-3:before {
+      height: 0%;
+      width: 2px;
+    }
+    .btn-3:after {
+      width: 0%;
+      height: 2px;
+    }
+    .btn-3:hover{
+       background: transparent;
+      box-shadow: none;
+    }
+    .btn-3:hover:before {
+      height: 100%;
+    }
+    .btn-3:hover:after {
+      width: 100%;
+    }
+    .btn-3 span:hover{
+       color:var(--color);
+    }
+    .btn-3 span:before,
+    .btn-3 span:after {
+      position: absolute;
+      content: "";
+      left: 0;
+      bottom: 0;
+       background: var(--color);
+      transition: all 0.3s ease;
+    }
+    .btn-3 span:before {
+      width: 2px;
+      height: 0%;
+    }
+    .btn-3 span:after {
+      width: 0%;
+      height: 2px;
+    }
+    .btn-3 span:hover:before {
+      height: 100%;
+    }
+    .btn-3 span:hover:after {
+      width: 100%;
+    }
+    
+  
+    /*footer*/
+  .facebook{
+      color: rgb(197, 190, 190);
+  }
+  
+  
+  .footerText{
+    font-family: Berlin Sans FB;
+    color: white;
+    font-size: 3vh;
+  }
+  
+  .footer-background{
+    background-color: black;
+    text-align: center;
+  }
+  .facebook:hover{
+    color:white;
+    text-decoration: none;
+  }
+  .facebook{
+    font-size: 4vh;
+  }
+  
+  .form-correo{
+    margin: 10px !important;
+  }
+  
+  .form-texto:focus{
+    border-color: var(--color);
+    box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075)inset, 0 0 8px var(--color);
+    outline: 0 none;
+  }
+  
+  .form-texto-correcto{
+    border-color: #0FE642;
+    box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075)inset, 0 0 8px #0FE642;
+    outline: 0 none;
+  }
+  
+  .form-texto-incorrecto{
+    border-color: #E60F33;
+    box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075)inset, 0 0 8px #E60F33;
+    outline: 0 none;
+  }
+  .textarea1{
+    resize: vertical; 
+    max-height: 200px !important;
+    min-height: 100px !important;
+  }
+  .textarea1:focus{
+    border-color: var(--color);
+    box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075)inset, 0 0 8px var(--color);
+    outline: 0 none;
+  }
+  .form-footer{
+    width: 60%;
+  }
+  .dis-flex{
+    display: flex;
+  }
+  /*desactivado*/
+  .desactivado{
+        display: none;
+  }
+
+  /*responsive*/
+  @media only screen and (max-width:668px){
+      .centrado1{
+            display: block;
+            text-align: left !important;
+      }
+      .tamaño1{
+            font-size: 15px;
+      }
+      .footerText{
+          font-size: 16px;
+      }
+      .ancho-40{
+      width: 100% !important;
+      }
+      .ancho-50{
+          width: 100% !important;
+      }
+      .ancho-20{
+          width: 100% !important;
+      }
+      .ancho-60{
+          width: 100% !important;
+      }
+      
+      .facebook{
+      font-size: 4vh; 
+      }
+      .form-footer{
+      width: 84%;
+      }
+      .form-correo{
+      margin-left: 0 !important;
+      margin-right: 0;
+      margin-bottom: 5px;
+      margin-top: 5px;
+      }
+      .ancho-50{
+          width: 100%;
+      }
+      .d-flex{
+          display: block !important;
+      }
+      .dis-flex{
+        display: block;
+      }
+      .imagen_izquierda{
+            display: none;
+      }
+      .imagen_derecha{
+            display: none;
+      }
+      .desactivado{
+            display: flex;
+      }
+      .activado1{
+            display: none;
+      }
+      .imagen{
+            width: 100% !important;
+      }
+      .titulos{
+            font-size: 8vh;
+      }
+      .inicio-cliente{
+            font-size: 11vh !important;
+      }
+      .moto{
+            display: none;
+      }
+      section{
+        height: 170vh !important;
+      }
+  }
+
+
+  @media only screen and (max-width:1024px){
+    .tamaño1{
+      font-size:16px;
+    }
+
+    .ancho-77{
+      width: 80% !important;
+    }
+}
+@media only screen and (max-width:768px){
+  .imagen{
+    margin-left: 5px;
+    width: 60% !important;
+  }
+  .ancho-50{
+    width: 100% !important;
+  }
+  .d-flex{
+    display: block !important;
+  }
+  .imagen_derecha{
+    display: none;
+  }
+  .imagen_izquierda{
+    display: none;
+  }
+}
