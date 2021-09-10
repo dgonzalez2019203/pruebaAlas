@@ -36,6 +36,24 @@ function listPedidosC(req,res){
 }
 
 
+function listPedidosEstadoCliente(req,res){
+        var estado = req.params.id;
+        var cliente = req.params.idUsuario;
+
+        let query = 'call Sp_ListarPedidoPorEstadoCliente("'+estado+'","'+cliente+'")';
+        conexion.query(query, (err, findPedidos)=>{
+            if(err){
+                console.log(err)
+                res.send({message:"Error general"});
+            }else if(findPedidos){
+                res.send({message:"Pedidos encontrados", findPedidos});
+            }else{
+                
+                res.send({message:"Aun no has hecho ningun pedido, te esperamos pronto"})
+            }
+        });    
+}
+
 function listPedidosA(req,res){
     let query = 'call Sp_ListarPedidosCliente("'+userId+'")';
     conexion.query(query, (err, findPedidos)=>{
@@ -571,5 +589,6 @@ module.exports ={
     cancelPedido,
     listCreditos,
     listarCreditosDesc,
-    confirmarCredito
+    confirmarCredito,
+    listPedidosEstadoCliente
 }
