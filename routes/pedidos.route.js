@@ -21,7 +21,8 @@ api.post("/confirmarPedidoEspecial/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthA
 api.get("/getMensajero",[mdAuth.enshureAuth],pedidosController.getMensajero);
 api.get("/getFormaPago",[mdAuth.enshureAuth],pedidosController.getFormaPago);
 api.get("/getZonas",[mdAuth.enshureAuth],pedidosController.getZonas);
-api.get("/getZonasYFecha",[mdAuth.enshureAuth],pedidosController.getZonasYFecha);
+api.get("/getZonasYFecha",[mdAuth.enshureAuth,],pedidosController.getZonasYFecha);
+api.get("/listPedidoEspecialAdmin",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin],pedidosController.listPedidoEspecialAdmin);
 api.put("/cancelPedidoAdmin/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.cancelPedidoAdmin);
 
 

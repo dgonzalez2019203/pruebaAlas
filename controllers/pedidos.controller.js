@@ -152,7 +152,7 @@ function listPedidosF(req,res){
 function confirmarPedido(req, res){
     var pedidoId = req.params.id;
     var params = req.body;  
-    if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto && params.formaPagoId && params.pedidoDesc){
+    if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto>=0 && params.formaPagoId && params.pedidoDesc){
         let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajerId+'","'+params.pedidoCosto+'","'+params.estado+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';            
 
         conexion.query(query, (err, pedidoUpdate)=>{
@@ -165,9 +165,31 @@ function confirmarPedido(req, res){
             }
         })
     }else{
+        console.log(params.mensajerId)
+        console.log(params.pedidoCosto)
+        console.log(params.estado)
+        console.log(params.pedidoMonto)
+        console.log(params.formaPagoId)
+        console.log(params.pedidoDesc)
         res.send({message:"Ingresa los campos obligatorios"});
     }
 }
+
+
+function listPedidoEspecialAdmin(req,res){
+    
+    let query = 'call Sp_ListarPedidoEspecial()';
+    conexion.query(query, (err, findPedidos)=>{
+        if(err){
+            res.send({message:"Error general"});
+        }else if(findPedidos){
+            res.send({message:"Pedidos encontrados", findPedidos});
+        }else{
+            res.send({message:"Aun no has hecho ningun pedido, te esperamos pronto"})
+        }
+    });
+}
+
 
 
 function editarPedido(req, res){
@@ -348,7 +370,7 @@ function removePedido(req,res){
         if(err){
             res.send({message:"error general"});
         }else if(pedidoRemoved){
-            res.send({message:"Pedido eliminado exitosamente"})
+            res.send({message:"Pedido eliminado exitosamente",pedidoRemoved})
         }else{
             res.send({message:"Pedido no encontrado"})
         }
@@ -708,5 +730,6 @@ module.exports ={
     getDireccionesRecolecta,
     getDireccionesFinal,
     getCosto,
-    entregarPedido
+    entregarPedido,
+    listPedidoEspecialAdmin
 }
