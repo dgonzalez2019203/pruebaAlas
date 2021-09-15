@@ -11,7 +11,12 @@ function getMensajeroId(req,res){
         if(err){
             res.send({message:"Error general"});
         }else if(mensajeroFind){
-            res.send({message:"Datos del mensajero", mensajeroFind});
+            if(mensajeroFind[0][0] != undefined){
+                res.send({message:"Datos del mensajero", mensajeroFind});
+            }else{
+                res.send({message:"No se encontraron datos"})    
+            }
+            
         }else{
             res.send({message:"No se encontraron datos"})
         }
@@ -74,6 +79,7 @@ function saveMensajero(req,res){
                 }
             });
         }else{
+            console.log(params)
             res.send({message:"Ingresa los campos obligatorios"});
         }
 }
@@ -124,6 +130,8 @@ function updateMensajero(req,res){
                     });
                 }
             });
+        }else{
+            res.send({message:"ingresa campos obligatorios"})
         }
 }
 

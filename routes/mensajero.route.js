@@ -6,10 +6,10 @@ var mensajeroController = require("../controllers/mensajero.controller");
 var mdAuth = require("../middlewares/authenticated");
 var api = express.Router();
 
-api.get("/getMensajeroId/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],mensajeroController.getMensajeroId);
-api.get("/getEstadoCivil",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],mensajeroController.getEstadoCivil);
+api.get("/getMensajeroId/:id",[mdAuth.enshureAuth],mensajeroController.getMensajeroId);
+api.get("/getEstadoCivil",[mdAuth.enshureAuth],mensajeroController.getEstadoCivil);
 
-api.post("/saveMensajero",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],mensajeroController.saveMensajero);
-api.put("/updateMensajero/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],mensajeroController.updateMensajero);
+api.post("/saveMensajero",[mdAuth.enshureAuth],mensajeroController.saveMensajero);
+api.put("/updateMensajero/:id",[mdAuth.enshureAuth],mensajeroController.updateMensajero);
 
 module.exports = api;
