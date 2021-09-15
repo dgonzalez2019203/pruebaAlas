@@ -358,14 +358,15 @@ function removePedido(req,res){
 
 function savePedidoEspecial(req,res){
     var userId = req.params.id;
-    var params = req.body;
+    var params = req.body;    
+    params.pedidoFecha = moment().tz('America/Guatemala').format("YYYY-MM-DD");
     if(params.pedidoDesc && params.pedidoFecha){
         let query = 'call Sp_AgregarPedidoEspecial("'+userId+'","'+params.pedidoDesc+'","'+params.pedidoFecha+'")';
         conexion.query(query, (err, pedidoSaved)=>{
             if(err){
                 res.send({message:"error general"});
             }else if(pedidoSaved){
-                res.send({message:"Pedido especial creado exitosamente"})
+                res.send({message:"Pedido especial creado exitosamente",pedidoSaved})
             }else{
                 res.send({message:"Pedido no encontrado"})
             }

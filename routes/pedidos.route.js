@@ -12,8 +12,6 @@ api.get("/listPedidos",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosCont
 api.get("/listPedidosF",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.listPedidosF); //Listar pedidos por fecha
 api.get("/listPedidosC/:id",[mdAuth.enshureAuth],pedidosController.listPedidosC); //listar pedidos por cliente
 api.get("/listPedidosEstadoCliente/:id/:idUsuario",[mdAuth.enshureAuth],pedidosController.listPedidosEstadoCliente); //listar pedidos por cliente
-api.get("/listPedidosCE/:id",[mdAuth.enshureAuth],pedidosController.listPedidosCE); //Listar pedidos cliente especial
-
 api.get("/listPedidosME/:id",[mdAuth.enshureAuth],pedidosController.listPedidosME); //Listar pedidos especiales por mensajero 
 api.get("/listPedidosE/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.listPedidosEstado); //Listar pedidos por estado
 
@@ -25,6 +23,11 @@ api.get("/getFormaPago",[mdAuth.enshureAuth],pedidosController.getFormaPago);
 api.get("/getZonas",[mdAuth.enshureAuth],pedidosController.getZonas);
 api.get("/getZonasYFecha",[mdAuth.enshureAuth],pedidosController.getZonasYFecha);
 api.put("/cancelPedidoAdmin/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.cancelPedidoAdmin);
+
+
+// CLIENTE ESPECIAL
+api.get("/listPedidosCE/:id",[mdAuth.enshureAuth],pedidosController.listPedidosCE); //Listar pedidos cliente especial
+api.post("/savePedidoEspecial/:id",[mdAuth.enshureAuth],pedidosController.savePedidoEspecial); //AGREGAR pedidos cliente especial
 
 
 /*Mensajero*/
