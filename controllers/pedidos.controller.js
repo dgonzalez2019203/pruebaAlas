@@ -3,7 +3,7 @@ var mysql = require("mysql")
 var configConexion =  require("../config/conexion");
 const { param } = require("../routes/pedidos.route");
 var conexion = configConexion.conexion;
-
+var moment = require('moment-timezone')
 
 function listPedidos(req,res){
     var fecha = "2021-01-01"
@@ -322,12 +322,10 @@ function cancelPedidoAdmin(req,res){
 /* Funciones de usuario normal*/
 function savePedido(req, res){
     var params = req.body;
-    var pedidoId = req.params.id;
-
     if(params.pedidoPuntoInicio && params.pedidoDireccionInicio && params.pedidoPuntoFinal && params.pedidoDireccionFinal && params.pedidoUsuarioId
         && params.pedidoTelefonoReceptor && params.pedidoCosto && params.pedidoMonto && params.nombreReceptor && params.pedidoDesc && params.pedidoFecha){
 
-            let query = 'call Sp_AgregarPedido("'+pedidoId+'","'+params.params.pedidoFecha+'","'+params.pedidoPuntoInicio+'","'+params.pedidoDireccionInicio+'","'+params.pedidoPuntoFinal+'","'+params.pedidoDireccionFinal+'","'+userId+'","'+params.pedidoTelefonoReceptor+'","'+params.pedidoCosto+'","'+params.pedidoMonto+'","'+params.nombreReceptor+'","'+params.pedidoDesc+'")';            
+            let query = 'call Sp_AgregarPedido("'+params.pedidoFecha+'","'+params.pedidoPuntoInicio+'","'+params.pedidoDireccionInicio+'","'+params.pedidoPuntoFinal+'","'+params.pedidoDireccionFinal+'","'+params.pedidoUsuarioId+'","'+params.pedidoTelefonoReceptor+'","'+params.pedidoCosto+'","'+params.pedidoMonto+'","'+params.nombreReceptor+'","'+params.pedidoDesc+'")';            
             conexion.query(query, (err, pedidoSaved)=>{
                 if(err){
                     res.send({message:"error general"});
@@ -558,6 +556,119 @@ function updatePedidoME(req,res){
 }
 
 
+function entregarPedido(req,res){
+    var params = req.body;
+    params.estado = 3;
+    params.ruta = "default";
+    params.fecha = moment().tz('America/Guatemala').format("YYYY-MM-DD");
+    if(params.pedidoId && params.estado &&  params.ruta && params.comentarioMensajero && params.fecha  && params.pedidoCosto &&  params.formaPagoId && params.pedidoMonto){
+        
+        let query = 'call Sp_EntregarPedido("'+params.pedidoId+'","'+params.estado+'","'+params.ruta+'","'+params.comentarioMensajero+'","'+params.fecha+'","'+params.pedidoCosto+'","'+params.formaPagoId+'","'+params.pedidoMonto+'")';
+        console.log(query);
+        conexion.query(query, (err, entregarPedido)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(entregarPedido){
+                res.send({message:"el pedido se ha entregado exitosamente", entregarPedido})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Tienes que enviar todos los datos para poder actualizar el pedido"})        
+    }
+
+}
+
+// ZONAS DIRECCIONES
+
+
+
+function getPuntoInicio(req,res){
+    let query = 'call Sp_ListarPuntoInicio()';
+        
+    conexion.query(query, (err, puntoInicio)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(puntoInicio){
+            res.send({message:"registros de punto de inicio", puntoInicio});
+        }else{
+            res.send({message:"no hay registros"})
+        }
+    });
+}
+
+
+
+function getPuntoFinal(req,res){
+
+    var idInicio = req.params.id;
+
+    let query = 'call Sp_ListarPuntoFinal('+idInicio+')';
+        
+    conexion.query(query, (err, puntoFinal)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(puntoFinal){
+            res.send({message:"registros de punto de final", puntoFinal});
+        }else{
+            res.send({message:"no hay registros"})
+        }
+    });
+}
+
+
+function getDireccionesRecolecta(req,res){
+
+    var cliente = req.params.id;
+    let query = 'call SpClientesDireccionesR('+cliente+')';
+
+    conexion.query(query, (err, recolecta)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(recolecta){
+            res.send({message:"registros de punto de final", recolecta});
+        }else{
+            res.send({message:"no hay registros"})
+        }
+    });
+}
+
+
+function getDireccionesFinal(req,res){
+
+    var cliente = req.params.id;
+
+    let query = 'call SpClientesDireccionesF('+cliente+')';
+        
+    conexion.query(query, (err, DireccionFinal)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(DireccionFinal){
+            res.send({message:"registros de punto de final", DireccionFinal});
+        }else{
+            res.send({message:"no hay registros"})
+        }
+    });
+}
+
+function getCosto(req,res){
+    var puntoInicio = req.params.puntoInicio;
+    var puntoFinal = req.params.puntoFinal;
+
+    let query = 'call SP_BuscarCostoPedido('+puntoInicio+','+puntoFinal+')';
+        
+    conexion.query(query, (err, pedidoCosto)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(pedidoCosto){
+            res.send({message:"costo encontrado", pedidoCosto});
+        }else{
+            res.send({message:"no hay registros de costos"})
+        }
+    });
+}
+
 module.exports ={
     listPedidosC,
     listPedidosCE,
@@ -590,5 +701,11 @@ module.exports ={
     listCreditos,
     listarCreditosDesc,
     confirmarCredito,
-    listPedidosEstadoCliente
+    listPedidosEstadoCliente,
+    getPuntoInicio,
+    getPuntoFinal,
+    getDireccionesRecolecta,
+    getDireccionesFinal,
+    getCosto,
+    entregarPedido
 }

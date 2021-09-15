@@ -13,7 +13,7 @@ api.get("/listPedidosF",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosCon
 api.get("/listPedidosC/:id",[mdAuth.enshureAuth],pedidosController.listPedidosC); //listar pedidos por cliente
 api.get("/listPedidosEstadoCliente/:id/:idUsuario",[mdAuth.enshureAuth],pedidosController.listPedidosEstadoCliente); //listar pedidos por cliente
 api.get("/listPedidosCE/:id",[mdAuth.enshureAuth],pedidosController.listPedidosCE); //Listar pedidos cliente especial
-api.get("/listPedidosM/:id",[mdAuth.enshureAuth],pedidosController.listPedidosM); //Listar pedidos mensajero
+
 api.get("/listPedidosME/:id",[mdAuth.enshureAuth],pedidosController.listPedidosME); //Listar pedidos especiales por mensajero 
 api.get("/listPedidosE/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.listPedidosEstado); //Listar pedidos por estado
 
@@ -26,12 +26,16 @@ api.get("/getZonas",[mdAuth.enshureAuth],pedidosController.getZonas);
 api.get("/getZonasYFecha",[mdAuth.enshureAuth],pedidosController.getZonasYFecha);
 api.put("/cancelPedidoAdmin/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.cancelPedidoAdmin);
 
+
 /*Mensajero*/
-api.put("/updatePedidoM/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthCliente],pedidosController.updatePedidoM);
-api.put("/updatePedidoME/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthCliente],pedidosController.updatePedidoME);
+api.put("/updatePedidoM/:id",[mdAuth.enshureAuth],pedidosController.updatePedidoM);
+api.put("/updatePedidoME/:id",[mdAuth.enshureAuth],pedidosController.updatePedidoME);
+api.get("/listPedidosM/:id",[mdAuth.enshureAuth],pedidosController.listPedidosM); //Listar pedidos mensajero
+api.post("/entregarPedido",[mdAuth.enshureAuth],pedidosController.entregarPedido);
+
+
 
 // CREDITOS
-
 api.get("/buscarCredito/:usuarioId",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin], pedidosController.buscarCredito);
 api.put("/setCredito/:creditoId/:pedidoId",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin], pedidosController.setCredito);
 api.post("/addCredito/:usuarioId",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin],pedidosController.addCredito);
@@ -46,5 +50,16 @@ api.put("/confirmarCredito/:id",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin],ped
 api.put("/editarPedido/:id",[mdAuth.enshureAuth],pedidosController.editarPedido);
 api.put("/removePedido/:id",[mdAuth.enshureAuth],pedidosController.removePedido);
 api.put("/cancelPedido/:id",[mdAuth.enshureAuth],pedidosController.cancelPedido);
+api.post("/savePedido",[mdAuth.enshureAuth],pedidosController.savePedido);
+
+
+// GLOBAL
+
+api.get("/getPuntoInicio",[mdAuth.enshureAuth],pedidosController.getPuntoInicio);
+api.get("/getPuntoFinal/:id",[mdAuth.enshureAuth],pedidosController.getPuntoFinal);
+api.get("/getDireccionesRecolecta/:id",[mdAuth.enshureAuth],pedidosController.getDireccionesRecolecta);
+api.get("/getDireccionesFinal/:id",[mdAuth.enshureAuth],pedidosController.getDireccionesFinal);
+api.get("/getCosto/:puntoInicio/:puntoFinal",[mdAuth.enshureAuth],pedidosController.getCosto);
+
 
 module.exports = api;
