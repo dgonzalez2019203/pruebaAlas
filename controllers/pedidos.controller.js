@@ -3,7 +3,7 @@ var mysql = require("mysql")
 var configConexion =  require("../config/conexion");
 const { param } = require("../routes/pedidos.route");
 var conexion = configConexion.conexion;
-
+var moment = require('moment-timezone')
 
 function listPedidos(req,res){
     var fecha = "2021-01-01"
@@ -35,6 +35,24 @@ function listPedidosC(req,res){
     });
 }
 
+
+function listPedidosEstadoCliente(req,res){
+        var estado = req.params.id;
+        var cliente = req.params.idUsuario;
+
+        let query = 'call Sp_ListarPedidoPorEstadoCliente("'+estado+'","'+cliente+'")';
+        conexion.query(query, (err, findPedidos)=>{
+            if(err){
+                console.log(err)
+                res.send({message:"Error general"});
+            }else if(findPedidos){
+                res.send({message:"Pedidos encontrados", findPedidos});
+            }else{
+                
+                res.send({message:"Aun no has hecho ningun pedido, te esperamos pronto"})
+            }
+        });    
+}
 
 function listPedidosA(req,res){
     let query = 'call Sp_ListarPedidosCliente("'+userId+'")';
@@ -134,8 +152,7 @@ function listPedidosF(req,res){
 function confirmarPedido(req, res){
     var pedidoId = req.params.id;
     var params = req.body;  
-
-    if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto && params.formaPagoId && params.pedidoDesc){
+    if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto>=0 && params.formaPagoId && params.pedidoDesc){
         let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajerId+'","'+params.pedidoCosto+'","'+params.estado+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';            
 
         conexion.query(query, (err, pedidoUpdate)=>{
@@ -148,9 +165,31 @@ function confirmarPedido(req, res){
             }
         })
     }else{
+        console.log(params.mensajerId)
+        console.log(params.pedidoCosto)
+        console.log(params.estado)
+        console.log(params.pedidoMonto)
+        console.log(params.formaPagoId)
+        console.log(params.pedidoDesc)
         res.send({message:"Ingresa los campos obligatorios"});
     }
 }
+
+
+function listPedidoEspecialAdmin(req,res){
+    
+    let query = 'call Sp_ListarPedidoEspecial()';
+    conexion.query(query, (err, findPedidos)=>{
+        if(err){
+            res.send({message:"Error general"});
+        }else if(findPedidos){
+            res.send({message:"Pedidos encontrados", findPedidos});
+        }else{
+            res.send({message:"Aun no has hecho ningun pedido, te esperamos pronto"})
+        }
+    });
+}
+
 
 
 function editarPedido(req, res){
@@ -305,12 +344,10 @@ function cancelPedidoAdmin(req,res){
 /* Funciones de usuario normal*/
 function savePedido(req, res){
     var params = req.body;
-    var pedidoId = req.params.id;
-
     if(params.pedidoPuntoInicio && params.pedidoDireccionInicio && params.pedidoPuntoFinal && params.pedidoDireccionFinal && params.pedidoUsuarioId
         && params.pedidoTelefonoReceptor && params.pedidoCosto && params.pedidoMonto && params.nombreReceptor && params.pedidoDesc && params.pedidoFecha){
 
-            let query = 'call Sp_AgregarPedido("'+pedidoId+'","'+params.params.pedidoFecha+'","'+params.pedidoPuntoInicio+'","'+params.pedidoDireccionInicio+'","'+params.pedidoPuntoFinal+'","'+params.pedidoDireccionFinal+'","'+userId+'","'+params.pedidoTelefonoReceptor+'","'+params.pedidoCosto+'","'+params.pedidoMonto+'","'+params.nombreReceptor+'","'+params.pedidoDesc+'")';            
+            let query = 'call Sp_AgregarPedido("'+params.pedidoFecha+'","'+params.pedidoPuntoInicio+'","'+params.pedidoDireccionInicio+'","'+params.pedidoPuntoFinal+'","'+params.pedidoDireccionFinal+'","'+params.pedidoUsuarioId+'","'+params.pedidoTelefonoReceptor+'","'+params.pedidoCosto+'","'+params.pedidoMonto+'","'+params.nombreReceptor+'","'+params.pedidoDesc+'")';            
             conexion.query(query, (err, pedidoSaved)=>{
                 if(err){
                     res.send({message:"error general"});
@@ -333,11 +370,32 @@ function removePedido(req,res){
         if(err){
             res.send({message:"error general"});
         }else if(pedidoRemoved){
-            res.send({message:"Pedido eliminado exitosamente"})
+            res.send({message:"Pedido eliminado exitosamente",pedidoRemoved})
         }else{
             res.send({message:"Pedido no encontrado"})
         }
     })
+}
+
+
+function savePedidoEspecial(req,res){
+    var userId = req.params.id;
+    var params = req.body;    
+    params.pedidoFecha = moment().tz('America/Guatemala').format("YYYY-MM-DD");
+    if(params.pedidoDesc && params.pedidoFecha){
+        let query = 'call Sp_AgregarPedidoEspecial("'+userId+'","'+params.pedidoDesc+'","'+params.pedidoFecha+'")';
+        conexion.query(query, (err, pedidoSaved)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(pedidoSaved){
+                res.send({message:"Pedido especial creado exitosamente",pedidoSaved})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Envia los datos minimos para la creacion de tu pedido"})
+    }
 }
 
 function buscarCredito(req,res){
@@ -354,33 +412,15 @@ function buscarCredito(req,res){
         }
     });
 }
-function savePedidoEspecial(req,res){
-    var userId = req.params.id;
-    var params = req.body;
-    if(params.pedidoDesc && params.pedidoFecha){
-        let query = 'call Sp_AgregarPedidoEspecial("'+userId+'","'+params.pedidoDesc+'","'+params.pedidoFecha+'")';
-        conexion.query(query, (err, pedidoSaved)=>{
-            if(err){
-                res.send({message:"error general"});
-            }else if(pedidoSaved){
-                res.send({message:"Pedido especial creado exitosamente"})
-            }else{
-                res.send({message:"Pedido no encontrado"})
-            }
-        })
-    }else{
-        res.send({message:"Envia los datos minimos para la creacion de tu pedido"})
-    }
-}
-
 
 function setCredito(req,res){
     var id = req.params.creditoId;
     var pedido = req.params.pedidoId;
-    let query = 'call agregarPedidoCredito('+id+','+pedido+')';
+    let query = 'call Sp_AgregarPedidoCredito('+id+','+pedido+')';
         
     conexion.query(query, (err, creditoUpdated)=>{
         if(err){
+            console.log(err)
             res.send({message:"error general"});
         }else if(creditoUpdated){
             res.send({message:"se ha actualizado el credito con exito", creditoUpdated});
@@ -413,9 +453,10 @@ function addPedidoCredito(req,res){
     var id = req.params.creditoId;
     var pedido = req.params.pedidoId;
     let query = 'call Sp_AgregarPedidoCredito('+id+','+pedido+')';
-        
+        console.log(query)
     conexion.query(query, (err, creditoAdd)=>{
         if(err){
+            console.log(err);
             res.send({message:"error general"});
         }else if(creditoAdd){
             res.send({message:"se ha actualizado el credito con exito", creditoAdd});
@@ -424,6 +465,54 @@ function addPedidoCredito(req,res){
         }
     });
 }
+
+function listCreditos(req,res){
+    let query = 'call Sp_ListarCredito()';
+
+    conexion.query(query, (err, creditosFind)=>{
+        if(err){
+            console.log(err);
+            res.send({message:"error general"});
+        }else if(creditosFind){
+            res.send({message:"Creditos registrados:", creditosFind});
+        }else{
+            res.send({message:"no se han encontrado creditos"})
+        }
+    });
+}
+
+function confirmarCredito(req,res){
+    var id = req.params.id;
+    let query = 'call Sp_ConfirmarPedidoCredito('+id+')';
+
+    conexion.query(query, (err, creditoConfirm)=>{
+        if(err){
+            console.log(err);
+            res.send({message:"error general"});
+        }else if(creditoConfirm){
+            res.send({message:"Creditos registrados:", creditoConfirm});
+        }else{
+            res.send({message:"no se han encontrado creditos"})
+        }
+    });
+}
+
+function listarCreditosDesc(req,res){
+    var id = req.params.id;
+    let query = 'call Sp_ListarPedidoCredito('+id+')';
+
+    conexion.query(query, (err, creditosFind)=>{
+        if(err){
+            console.log(err);
+            res.send({message:"error general"});
+        }else if(creditosFind){
+            res.send({message:"Creditos registrados:", creditosFind});
+        }else{
+            res.send({message:"no se han encontrado creditos"})
+        }
+    });
+}
+
 
 
 function cancelPedido(req,res){
@@ -490,6 +579,119 @@ function updatePedidoME(req,res){
 }
 
 
+function entregarPedido(req,res){
+    var params = req.body;
+    params.estado = 3;
+    params.ruta = "default";
+    params.fecha = moment().tz('America/Guatemala').format("YYYY-MM-DD");
+    if(params.pedidoId && params.estado &&  params.ruta && params.comentarioMensajero && params.fecha  && params.pedidoCosto &&  params.formaPagoId && params.pedidoMonto){
+        
+        let query = 'call Sp_EntregarPedido("'+params.pedidoId+'","'+params.estado+'","'+params.ruta+'","'+params.comentarioMensajero+'","'+params.fecha+'","'+params.pedidoCosto+'","'+params.formaPagoId+'","'+params.pedidoMonto+'")';
+        console.log(query);
+        conexion.query(query, (err, entregarPedido)=>{
+            if(err){
+                res.send({message:"error general"});
+            }else if(entregarPedido){
+                res.send({message:"el pedido se ha entregado exitosamente", entregarPedido})
+            }else{
+                res.send({message:"Pedido no encontrado"})
+            }
+        })
+    }else{
+        res.send({message:"Tienes que enviar todos los datos para poder actualizar el pedido"})        
+    }
+
+}
+
+// ZONAS DIRECCIONES
+
+
+
+function getPuntoInicio(req,res){
+    let query = 'call Sp_ListarPuntoInicio()';
+        
+    conexion.query(query, (err, puntoInicio)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(puntoInicio){
+            res.send({message:"registros de punto de inicio", puntoInicio});
+        }else{
+            res.send({message:"no hay registros"})
+        }
+    });
+}
+
+
+
+function getPuntoFinal(req,res){
+
+    var idInicio = req.params.id;
+
+    let query = 'call Sp_ListarPuntoFinal('+idInicio+')';
+        
+    conexion.query(query, (err, puntoFinal)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(puntoFinal){
+            res.send({message:"registros de punto de final", puntoFinal});
+        }else{
+            res.send({message:"no hay registros"})
+        }
+    });
+}
+
+
+function getDireccionesRecolecta(req,res){
+
+    var cliente = req.params.id;
+    let query = 'call SpClientesDireccionesR('+cliente+')';
+
+    conexion.query(query, (err, recolecta)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(recolecta){
+            res.send({message:"registros de punto de final", recolecta});
+        }else{
+            res.send({message:"no hay registros"})
+        }
+    });
+}
+
+
+function getDireccionesFinal(req,res){
+
+    var cliente = req.params.id;
+
+    let query = 'call SpClientesDireccionesF('+cliente+')';
+        
+    conexion.query(query, (err, DireccionFinal)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(DireccionFinal){
+            res.send({message:"registros de punto de final", DireccionFinal});
+        }else{
+            res.send({message:"no hay registros"})
+        }
+    });
+}
+
+function getCosto(req,res){
+    var puntoInicio = req.params.puntoInicio;
+    var puntoFinal = req.params.puntoFinal;
+
+    let query = 'call SP_BuscarCostoPedido('+puntoInicio+','+puntoFinal+')';
+        
+    conexion.query(query, (err, pedidoCosto)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(pedidoCosto){
+            res.send({message:"costo encontrado", pedidoCosto});
+        }else{
+            res.send({message:"no hay registros de costos"})
+        }
+    });
+}
+
 module.exports ={
     listPedidosC,
     listPedidosCE,
@@ -518,5 +720,16 @@ module.exports ={
     cancelPedidoAdmin,
     updatePedidoM,
     updatePedidoME,
-    cancelPedido
+    cancelPedido,
+    listCreditos,
+    listarCreditosDesc,
+    confirmarCredito,
+    listPedidosEstadoCliente,
+    getPuntoInicio,
+    getPuntoFinal,
+    getDireccionesRecolecta,
+    getDireccionesFinal,
+    getCosto,
+    entregarPedido,
+    listPedidoEspecialAdmin
 }

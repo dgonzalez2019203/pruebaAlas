@@ -24,7 +24,12 @@ function login(req,res){
             if(err){
                 res.send({message:"error general"});
             }else if(findUser){
-                res.send({message:"Usuario logueado", findUser,token: jwt.createToken(findUser[0][0])});
+                if(findUser[0][0] != undefined){
+                    res.send({message:"Usuario logueado", findUser,token: jwt.createToken(findUser[0][0])});
+                }else{
+                    res.send({message:"usuario o contraseña incorrecta"});
+                }
+                
             }else{
                 res.send({message:"no se ha econtrado un usuario con este usuario o password"})
             }
