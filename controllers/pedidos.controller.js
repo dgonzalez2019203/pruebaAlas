@@ -1,7 +1,6 @@
 'use strict'
 var mysql = require("mysql")
 var configConexion =  require("../config/conexion");
-const { param } = require("../routes/pedidos.route");
 var conexion = configConexion.conexion;
 var moment = require('moment-timezone')
 

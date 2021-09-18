@@ -8,7 +8,8 @@ var api = express.Router();
 
 
 api.get("/listarFletes",[mdAuth.enshureAuth],fleteController.listarFletes);
-api.post("/agregarFlete",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],fleteController.agregarFlete);
-api.put("/actualizarFlete/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],fleteController.actualizarFlete);
-api.put("/eliminarFlete/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],fleteController.eliminarFlete);
+api.post("/agregarFlete",[mdAuth.enshureAuth],fleteController.agregarFlete);
+api.put("/actualizarFlete/:id",[mdAuth.enshureAuth],fleteController.actualizarFlete);
+api.put("/eliminarFlete/:id",[mdAuth.enshureAuth],fleteController.eliminarFlete);
 
+module.exports = api;

@@ -9,6 +9,8 @@ var app= express();
 var userRoutes = require("./routes/persona.route");
 var pedidosRoutes = require("./routes/pedidos.route");
 var mensajeroRoutes = require("./routes/mensajero.route");
+var fleteRoute = require("./routes/fletes.route");
+var zonaRoute = require("./routes/zonasRojas.route");
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
@@ -24,5 +26,7 @@ app.use((req, res, next)=>{
 app.use("/alasgt",userRoutes);
 app.use("/alasgt",pedidosRoutes);
 app.use("/alasgt",mensajeroRoutes);
+app.use("/alasgt",fleteRoute);
+app.use("/alasgt",zonaRoute);
 
 module.exports = app;

@@ -9,7 +9,6 @@ conexion = mysql.createConnection({
     database: 'alasgt_DBAlasGt',
     user: 'alasgt_alasgt',
     password: 'Alasgt2020'
-
 });
 
 conexion.connect(function(error){

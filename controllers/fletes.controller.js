@@ -4,11 +4,11 @@ var configConexion =  require("../config/conexion");
 var conexion = configConexion.conexion;
 
 function listarFletes(req,res){
-    let query = 'call Sp_ListarPedido()';
+    let query = 'call Sp_ListarFletes()';
     conexion.query(query, (err, findFletes)=>{
         if(err){
             res.send({message:"Error general", err});
-        }else if(findPedidos){
+        }else if(findFletes){
  
             res.send({message:"Fletes encontrados", findFletes});
         }else{
@@ -21,8 +21,11 @@ function actualizarFlete(req, res){
     var fleteId = req.params.id;
     var params = req.body;  
 
-    if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto && params.formaPagoId && params.pedidoDesc){
-        let query = 'call Sp_ConfirmarPedido("'+fleteId+'","'+params.mensajerId+'","'+params.pedidoCosto+'","'+params.estado+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';            
+    if(params.fletesFecha && params.fletesFechaEntrega && params.estadoFlete && params.fletesGanancia && params.fletesMensajeroCobro && params.fletesGasto && params.fleteDescripcion && params.fletesUsuarioId && params.fletesConductor){
+
+        var total = Number.parseFloat(params.fletesGanancia) - (Number.parseFloat(params.fletesMensajeroCobro) + Number.parseFloat(params.fletesGasto))
+
+        let query = 'call Sp_ActualizarFlete("'+fleteId+'","'+params.fletesFecha+'","'+params.fletesFechaEntrega+'","'+params.estadoFlete+'","'+params.fletesGanancia+'","'+params.fletesMensajeroCobro+'","'+params.fletesGasto+'","'+total+'","'+params.fleteDescripcion+'","'+params.fletesUsuarioId+'","'+params.fletesConductor+'")';            
 
         conexion.query(query, (err, fletesUpdate)=>{
             if(err){
@@ -41,8 +44,11 @@ function actualizarFlete(req, res){
 function agregarFlete(req, res){
     var params = req.body;  
 
-    if(params.mensajerId && params.pedidoCosto && params.estado && params.pedidoMonto && params.formaPagoId && params.pedidoDesc){
-        let query = 'call Sp_AgregarFlete("'+params.mensajerId+'","'+params.pedidoCosto+'","'+params.estado+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';
+    if(params.fletesFecha && params.fletesFechaEntrega && params.estadoFlete && params.fletesGanancia && params.fletesMensajeroCobro && params.fletesGasto && params.fleteDescripcion && params.fletesUsuarioId && params.fletesConductor){
+
+        var total = Number.parseFloat(params.fletesGanancia) - (Number.parseFloat(params.fletesMensajeroCobro) + Number.parseFloat(params.fletesGasto))
+
+        let query = 'call Sp_AgregarFlete("'+params.fletesFecha+'","'+params.fletesFechaEntrega+'","'+params.estadoFlete+'","'+params.fletesGanancia+'","'+params.fletesMensajeroCobro+'","'+params.fletesGasto+'","'+total+'","'+params.fleteDescripcion+'","'+params.fletesUsuarioId+'","'+params.fletesConductor+'")';
 
         conexion.query(query, (err, fleteSaved)=>{
             if(err){
