@@ -3,6 +3,9 @@ var mysql = require("mysql")
 var configConexion =  require("../config/conexion");
 var conexion = configConexion.conexion;
 var moment = require('moment-timezone')
+var fs = require("fs");
+var path = require("path");
+
 
 function listPedidos(req,res){
     var fecha = "2021-01-01"
@@ -513,7 +516,6 @@ function listarCreditosDesc(req,res){
 }
 
 
-
 function cancelPedido(req,res){
     var pedidoId = req.params.id;
     var params = req.body;
@@ -603,9 +605,6 @@ function entregarPedido(req,res){
 }
 
 // ZONAS DIRECCIONES
-
-
-
 function getPuntoInicio(req,res){
     let query = 'call Sp_ListarPuntoInicio()';
         
@@ -691,6 +690,65 @@ function getCosto(req,res){
     });
 }
 
+function uploadImgPedido(req, res){
+    var pedidoId = req.params.id;
+    var fileName = "Sin imagen";    
+
+    if(req.files){
+        //captura la ruta de la imagen
+        var filePath = req.files.image.path;
+        //separa en indices cada carpeta
+        //si se trabaja en linux ('\');
+        var fileSplit = filePath.split('\\');
+        //captura el nombre de la imagen
+        var fileName = fileSplit[2];
+
+        var ext = fileName.split('\.');
+        var fileExt = ext[1];
+
+        if( fileExt == 'png' ||
+            fileExt == 'jpg' ||
+            fileExt == 'jpeg' ||
+            fileExt == 'gif'){
+                
+                let query = 'call SpActualizarIMG("'+fileName+'","'+pedidoId+'")';
+                console.log(query);
+                conexion.query(query, (err, updateIMG)=>{
+                    if(err){
+                        res.send({message:"error general", err, query});
+                    }else if(updateIMG){
+                        res.send({message:"Imagen actualizada", updateIMG});
+                    }else{
+                        res.send({message:"no se pudo actualizar la imagen"})
+                    }
+                });
+            }else{
+                fs.unlink(filePath, (err)=>{
+                    if(err){
+                        return res.status(500).send({message: 'Error al eliminar y la extensión no es válida'});
+                    }else{
+                        return res.status(403).send({message: 'Extensión no válida, y archivo eliminado'});
+                    }
+                })
+            }
+    }else{
+        return res.status(404).send({message: 'No has subido una imagen'});
+    }
+}
+
+function getImgPedidos(req, res){
+    var fileName = req.params.fileName;
+    var pathFile = './uploads/pedidos/' + fileName;
+    fs.exists(pathFile, (exists)=>{
+        if(exists){                    
+            return res.sendFile(path.resolve(pathFile))
+        }else{
+           return res.status(404).send({message: 'Imagen inexistente'});
+        }
+    })
+}
+
+
 module.exports ={
     listPedidosC,
     listPedidosCE,
@@ -730,5 +788,7 @@ module.exports ={
     getDireccionesFinal,
     getCosto,
     entregarPedido,
-    listPedidoEspecialAdmin
+    listPedidoEspecialAdmin,
+    uploadImgPedido,
+    getImgPedidos
 }
