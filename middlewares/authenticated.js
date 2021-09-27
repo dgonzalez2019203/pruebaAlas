@@ -44,3 +44,12 @@ exports.enshureAuthCliente = (req,res,next)=>{
         next();
     }
 }
+
+exports.enshureAuthClienteFlete = (req,res,next)=>{
+    var payload = req.user;
+    if(payload.tipoUsuarioId != "5"){
+        return res.status(404).send({message:"no tienes permiso para acceder a esta ruta"});
+    }else{
+        next();
+    }
+}
