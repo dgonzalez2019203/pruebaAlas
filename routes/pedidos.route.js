@@ -5,6 +5,8 @@ var express = require("express");
 var pedidosController = require("../controllers/pedidos.controller");
 var mdAuth = require("../middlewares/authenticated");
 var api = express.Router();
+var connectMultiparty = require('connect-multiparty');
+var mdUpload = connectMultiparty({ uploadDir: './uploads/pedidos'});
 
 
 /*Global*/
@@ -58,12 +60,16 @@ api.post("/savePedido",[mdAuth.enshureAuth],pedidosController.savePedido);
 
 
 // GLOBAL
-
 api.get("/getPuntoInicio",[mdAuth.enshureAuth],pedidosController.getPuntoInicio);
 api.get("/getPuntoFinal/:id",[mdAuth.enshureAuth],pedidosController.getPuntoFinal);
 api.get("/getDireccionesRecolecta/:id",[mdAuth.enshureAuth],pedidosController.getDireccionesRecolecta);
 api.get("/getDireccionesFinal/:id",[mdAuth.enshureAuth],pedidosController.getDireccionesFinal);
 api.get("/getCosto/:puntoInicio/:puntoFinal",[mdAuth.enshureAuth],pedidosController.getCosto);
+
+
+//Imganes 
+api.put('/uploadImgPedido/:id',[mdAuth.enshureAuth, mdUpload],pedidosController.uploadImgPedido);
+api.get("/getImgPedidos/:fileName",[mdUpload],pedidosController.getImgPedidos);
 
 
 module.exports = api;
