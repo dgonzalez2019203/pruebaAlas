@@ -23,12 +23,12 @@ function listarFletes(req,res){
 function actualizarFlete(req, res){
     var fleteId = req.params.id;
     var params = req.body;  
+    var fecha = moment().tz('America/Guatemala').format("YYYY-MM-DD");
 
-    if(params.fletesFecha && params.fletesFechaEntrega && params.estadoFlete && params.fletesGanancia && params.fletesMensajeroCobro && params.fletesGasto && params.fleteDescripcion && params.fletesUsuarioId && params.fletesConductor){
+    if(params.fletesFechaEntrega && params.estadoFlete && params.fletesGanancia && params.fletesMensajeroCobro && params.fletesGasto && params.fleteDescripcion && params.fletesUsuarioId && params.fletesConductor){
 
-        var total = Number.parseFloat(params.fletesGanancia) - (Number.parseFloat(params.fletesMensajeroCobro) + Number.parseFloat(params.fletesGasto))
-
-        let query = 'call Sp_ActualizarFlete("'+fleteId+'","'+params.fletesFecha+'","'+params.fletesFechaEntrega+'","'+params.estadoFlete+'","'+params.fletesGanancia+'","'+params.fletesMensajeroCobro+'","'+params.fletesGasto+'","'+total+'","'+params.fleteDescripcion+'","'+params.fletesUsuarioId+'","'+params.fletesConductor+'")';            
+        var total = Number.parseFloat(params.fletesGanancia) + (Number.parseFloat(params.fletesMensajeroCobro) + Number.parseFloat(params.fletesGasto))
+        let query = 'call Sp_ActualizarFlete("'+fleteId+'","'+fecha+'","'+params.fletesFechaEntrega+'","'+params.estadoFlete+'","'+params.fletesGanancia+'","'+params.fletesMensajeroCobro+'","'+params.fletesGasto+'","'+total+'","'+params.fleteDescripcion+'","'+params.fletesUsuarioId+'","'+params.fletesConductor+'")';            
 
         conexion.query(query, (err, fletesUpdate)=>{
             if(err){
@@ -107,7 +107,7 @@ function actualizarFleteByCliente(req, res){
     var fleteId = req.params.id;
 
     if(params.fletesFechaEntrega && params.fleteDescripcion){        
-        let query = 'call Sp_AgregarFlete("'+params.fletesFechaEntrega+'","'+params.fleteDescripcion+'","'+fleteId+'")';
+        let query = 'call Sp_ActualizarFleteByCliente("'+params.fletesFechaEntrega+'","'+params.fleteDescripcion+'","'+fleteId+'")';
 
         conexion.query(query, (err, fleteSaved)=>{
             if(err){
