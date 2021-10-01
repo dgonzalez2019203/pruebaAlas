@@ -35,6 +35,10 @@ api.get("/listPedidoMensajero/:id",[mdAuth.enshureAuth],pedidosController.getEmp
 api.get("/listPedidoRango/:start/:end/:id",[mdAuth.enshureAuth],pedidosController.getRangoEmpresa); // empresa y rango
 
 
+api.get("/getNoMensajero/:id",[mdAuth.enshureAuth],pedidosController.getPendientesMensajero);
+
+
+
 //ESTADO
 api.get("/listPedidoFechaEstado/:fecha/:estado",[mdAuth.enshureAuth],pedidosController.getFechaPedidosEStado); // fecha pedidos estado
 api.get("/listPedidoFechaEmpresaEstado/:fecha/:estado/:id",[mdAuth.enshureAuth],pedidosController.getFechaPedidosEmpresaEstado); // fecha emrpesa estado
@@ -49,6 +53,12 @@ api.get("/listPedidosCE/:id",[mdAuth.enshureAuth],pedidosController.listPedidosC
 api.post("/savePedidoEspecial/:id",[mdAuth.enshureAuth],pedidosController.savePedidoEspecial); //AGREGAR pedidos cliente especial
 api.get("/listRangoEspecial/:id/:start/:end",[mdAuth.enshureAuth],pedidosController.getEspecialRango); //AGREGAR pedidos cliente especial
 api.get("/listEspecialEmpresa",[mdAuth.enshureAuth],pedidosController.getEmpresaEspecial); //list empresa especial
+api.get("/listEspecialFecha/:fecha",[mdAuth.enshureAuth],pedidosController.getPedidoEspecialFecha); //list empresa especial
+
+//cliente especial estado
+api.get("/listEspecialFechaEstado/:fecha/:estado",[mdAuth.enshureAuth],pedidosController.getPedidoEspecialFechaEstado); //list empresa especial
+api.get("/listEspecialRangoEstado/:start/:end/:id/:estado",[mdAuth.enshureAuth],pedidosController.getEspecialRangoEstado); //list empresa especial
+
 
 
 /*Mensajero*/
