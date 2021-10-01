@@ -9,7 +9,7 @@ function listarZonasRojas(req,res){
         if(err){
             res.send({message:"Error general", err});
         }else if(findZonas){ 
-            res.send({message:"Zonas encontradas", findFletes});
+            res.send({message:"Zonas encontradas", findZonas});
         }else{
             res.send({message:"Aun no has hecho ninguna zona, te esperamos pronto"})
         }
@@ -19,9 +19,8 @@ function listarZonasRojas(req,res){
 function actualizarZonaRoja(req, res){
     var zonaId = req.params.id;
     var params = req.body;  
-
     if(params.zonaRojaMunicipio && params.zonaRojaZona){        
-        let query = 'call SpActualizarZonaRoja("'+zonaId+'","'+params.zonaRojaMunicipio+'","'+params.zonaRojaZona+'")';            
+        let query = 'call SpActualizarZonaRoja("'+params.zonaRojaMunicipio+'","'+params.zonaRojaZona+'","'+zonaId+'")';            
 
         conexion.query(query, (err, zonaUpdate)=>{
             if(err){

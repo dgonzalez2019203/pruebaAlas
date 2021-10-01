@@ -6,6 +6,7 @@ var pedidosController = require("../controllers/pedidos.controller");
 var mdAuth = require("../middlewares/authenticated");
 var api = express.Router();
 var connectMultiparty = require('connect-multiparty');
+
 var mdUpload = connectMultiparty({ uploadDir: './uploads/pedidos'});
 
 
@@ -27,10 +28,27 @@ api.get("/getZonasYFecha",[mdAuth.enshureAuth,],pedidosController.getZonasYFecha
 api.get("/listPedidoEspecialAdmin",[mdAuth.enshureAuth,mdAuth.enshureAuthAdmin],pedidosController.listPedidoEspecialAdmin);
 api.put("/cancelPedidoAdmin/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.cancelPedidoAdmin);
 
+api.get("/listPedidoFecha/:fecha",[mdAuth.enshureAuth],pedidosController.getFechaPedidos); // fecha pedidos
+api.get("/listPedidoFechaEmpresa/:fecha/:id",[mdAuth.enshureAuth],pedidosController.getFechaPedidosEmpresa); // fecha pedidos y empresa
+api.get("/listEmpresa",[mdAuth.enshureAuth],pedidosController.getEmpresa); // empresa
+api.get("/listPedidoMensajero/:id",[mdAuth.enshureAuth],pedidosController.getEmpresaMensajero); // mensajero
+api.get("/listPedidoRango/:start/:end/:id",[mdAuth.enshureAuth],pedidosController.getRangoEmpresa); // empresa y rango
+
+
+//ESTADO
+api.get("/listPedidoFechaEstado/:fecha/:estado",[mdAuth.enshureAuth],pedidosController.getFechaPedidosEStado); // fecha pedidos estado
+api.get("/listPedidoFechaEmpresaEstado/:fecha/:estado/:id",[mdAuth.enshureAuth],pedidosController.getFechaPedidosEmpresaEstado); // fecha emrpesa estado
+api.get("/listPedidoMensajeroEstado/:id/:estado",[mdAuth.enshureAuth],pedidosController.getPedidoMensajeroEstado); // mensajero y estado
+api.get("/listPedidoRangoEstado/:start/:end/:id/:estado",[mdAuth.enshureAuth],pedidosController.getRangoEmpresaEstado); // empresa y rango
+api.get("/listEspecialEstado/:estado",[mdAuth.enshureAuth],pedidosController.getEspecialEstado); // empresa y rango
+
+
 
 // CLIENTE ESPECIAL
 api.get("/listPedidosCE/:id",[mdAuth.enshureAuth],pedidosController.listPedidosCE); //Listar pedidos cliente especial
 api.post("/savePedidoEspecial/:id",[mdAuth.enshureAuth],pedidosController.savePedidoEspecial); //AGREGAR pedidos cliente especial
+api.get("/listRangoEspecial/:id/:start/:end",[mdAuth.enshureAuth],pedidosController.getEspecialRango); //AGREGAR pedidos cliente especial
+api.get("/listEspecialEmpresa",[mdAuth.enshureAuth],pedidosController.getEmpresaEspecial); //list empresa especial
 
 
 /*Mensajero*/
@@ -68,7 +86,7 @@ api.get("/getCosto/:puntoInicio/:puntoFinal",[mdAuth.enshureAuth],pedidosControl
 
 
 //Imganes 
-api.put('/uploadImgPedido/:id',[mdAuth.enshureAuth, mdUpload],pedidosController.uploadImgPedido);
+api.put('/uploadImgPedido/:id',[mdUpload],pedidosController.uploadImgPedido);
 api.get("/getImgPedidos/:fileName",[mdUpload],pedidosController.getImgPedidos);
 
 
