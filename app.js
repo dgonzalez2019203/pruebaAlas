@@ -11,6 +11,7 @@ var pedidosRoutes = require("./routes/pedidos.route");
 var mensajeroRoutes = require("./routes/mensajero.route");
 var fleteRoute = require("./routes/fletes.route");
 var zonaRoute = require("./routes/zonasRojas.route");
+var tokenRoute = require("./routes/tokenNotification.route");
 
 app.use(bodyParser.urlencoded({limit: '50mb',extended:false}));
 app.use(bodyParser.json({limit: '50mb'}));
@@ -27,5 +28,6 @@ app.use("/alasgt",pedidosRoutes);
 app.use("/alasgt",mensajeroRoutes);
 app.use("/alasgt",fleteRoute);
 app.use("/alasgt",zonaRoute);
+app.use("/alasgt",tokenRoute);
 
 module.exports = app;

@@ -22,6 +22,7 @@ function login(req,res){
         
         conexion.query(query1, (err, findUser)=>{
             if(err){
+                console.log(err)
                 res.send({message:"error general"});
             }else if(findUser){
                 if(findUser[0][0] != undefined){
