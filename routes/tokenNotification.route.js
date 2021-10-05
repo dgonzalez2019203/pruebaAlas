@@ -9,7 +9,10 @@ var api = express.Router();
 
 
 api.post("/saveNotificationToken",tokenController.saveNotification);
-api.get("/listNotificationCliente",tokenController.listNotificationCliente);
-api.get("/listNotificationAdmin",tokenController.listNotificationAdmin);
-api.get("/listNotificationMensajero",tokenController.listNotificationMensajero);
-api.get("/listNotificationByUsuario/:id",tokenController.listNotificationByUsuario);
+api.post("/listNotificationCliente",tokenController.listNotificationCliente);
+api.post("/listNotificationAdmin",tokenController.listNotificationAdmin);
+api.post("/listNotificationMensajero",tokenController.listNotificationMensajero);
+api.post("/listNotificationByUsuario/:id",tokenController.listNotificationByUsuario);
+
+
+module.exports = api;
