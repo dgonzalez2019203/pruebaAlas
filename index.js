@@ -39,7 +39,6 @@ io.on("connection", function (socket) {
 
     socket.on('default',function(res){
        io.emit("defaultRes", res);
-       console.log("hola")
     });
 
     socket.on('SolicitarPedido',function(res){

@@ -789,7 +789,6 @@ function getFechaPedidosEmpresa(req,res){
     var fecha = req.params.fecha;
     var idCliente = req.params.id;
     let query = 'call Sp_ListarFechaYempresa("'+fecha+'","'+idCliente+'")';
-    console.log(query)
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"error general"});
@@ -807,7 +806,6 @@ function getFechaPedidosEmpresaEstado(req,res){
     var idCliente = req.params.id;
     var estado = req.params.estado;
     let query = 'call listarEmpresaEstadoFecha("'+estado+'","'+fecha+'","'+idCliente+'")';
-    console.log(query)
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"error general"});
@@ -838,7 +836,6 @@ function getEmpresa(req,res){
 function getEmpresaMensajero(req,res){
     var idMensajero = req.params.id;
     let query = 'call Sp_ListarPedidoMensajero("'+idMensajero+'")';
-    console.log(query)
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"error general"});
@@ -857,7 +854,6 @@ function getPedidoMensajeroEstado(req,res){
     var estado = req.params.estado;
 
     let query = 'call Sp_ListarPedidoPorEstadoMensajero("'+estado+'","'+idMensajero+'")';
-    console.log(query)
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"error general"});
@@ -875,7 +871,6 @@ function getRangoEmpresa(req,res){
     var start = req.params.start;
     var end = req.params.end;
     let query = 'call Sp_ListarPedidoRangoFechaEmpresa("'+start+'","'+end+'","'+idEmpresa+'")';
-    console.log(query)
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"error general"});
@@ -893,7 +888,6 @@ function getRangoEmpresaEstado(req,res){
     var end = req.params.end;
     var estado = req.params.estado;
     let query = 'call Sp_ListarPedidoEstadoRangoFechaEmpresa("'+start+'","'+end+'","'+estado+'","'+idEmpresa+'")';
-    console.log(query)
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"error general"});
@@ -909,7 +903,6 @@ function getRangoEmpresaEstado(req,res){
 function getEspecialEstado(req,res){
     var estado = req.params.estado;
     let query = 'call sp_FiltroEstadoEspecial("'+estado+'")';
-    console.log(query)
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"error general"});
@@ -926,7 +919,6 @@ function getEspecialRango(req,res){
     var fechaInicio = req.params.start;
     var fechaFinal = req.params.end;
     let query = 'call listarFechaClienteEspecial("'+fechaInicio+'","'+fechaFinal+'","'+id+'")';
-    console.log(query)
     conexion.query(query, (err, findPedidos)=>{
         if(err){
             res.send({message:"error general"});
@@ -936,9 +928,6 @@ function getEspecialRango(req,res){
             res.send({message:"no hay registros de pedidos"})
         }
     });
-
-
-
 }
 
 
@@ -950,6 +939,72 @@ function getEmpresaEspecial(req,res){
             res.send({message:"error general"});
         }else if(findEmpresa){
             res.send({message:"pedidos encontrado", findEmpresa});
+        }else{
+            res.send({message:"no hay registros de pedidos"})
+        }
+    });
+}
+
+
+
+function getPedidoEspecialFecha(req,res){
+    var fecha = req.params.fecha;
+    let query = 'call spPedidoFechaEspecial("'+fecha+'")';
+    conexion.query(query, (err, findPedido)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(findPedido){
+            res.send({message:"pedidos encontrado", findPedido});
+        }else{
+            res.send({message:"no hay registros de pedidos"})
+        }
+    });
+}
+
+
+function getPedidoEspecialFechaEstado(req,res){
+    var fecha = req.params.fecha;
+    var estado = req.params.estado;
+    let query = 'call spPedidoFechaEspecialEstado("'+fecha+'","'+estado+'")';
+    conexion.query(query, (err, findPedido)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(findPedido){
+            res.send({message:"pedidos encontrado", findPedido});
+        }else{
+            res.send({message:"no hay registros de pedidos"})
+        }
+    });
+}
+
+
+
+function getEspecialRangoEstado(req,res){
+    var id = req.params.id;
+    var fechaInicio = req.params.start;
+    var fechaFinal = req.params.end;
+    var estado = req.params.estado;
+    let query = 'call spListarFechasEstadoEmpresaEspecial("'+fechaInicio+'","'+fechaFinal+'","'+id+'","'+estado+'")';
+    conexion.query(query, (err, findPedidos)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(findPedidos){
+            res.send({message:"pedidos encontrado", findPedidos});
+        }else{
+            res.send({message:"no hay registros de pedidos"})
+        }
+    });
+}
+
+
+function getPendientesMensajero(req,res){
+    var id = req.params.id;
+    let query = 'call listPendienteMensajero("'+id+'")';
+    conexion.query(query, (err, findTotal)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(findTotal){
+            res.send({message:"pedidos encontrado", findTotal});
         }else{
             res.send({message:"no hay registros de pedidos"})
         }
@@ -1009,5 +1064,9 @@ module.exports ={
     getRangoEmpresaEstado,
     getEspecialEstado,
     getEspecialRango,
-    getEmpresaEspecial
+    getEmpresaEspecial,
+    getPedidoEspecialFecha,
+    getPedidoEspecialFechaEstado,
+    getEspecialRangoEstado,
+    getPendientesMensajero
 }
