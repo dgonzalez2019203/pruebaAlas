@@ -20,7 +20,7 @@ api.get("/listPedidosE/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedido
 
 /*Adminnistrador*/
 api.put("/confirmarPedido/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.confirmarPedido);
-api.post("/confirmarPedidoEspecial/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.confirmarPedidoEspecial);
+api.put("/confirmarPedidoEspecial/:id",[mdAuth.enshureAuth, mdAuth.enshureAuthAdmin],pedidosController.confirmarPedidoEspecial);
 api.get("/getMensajero",[mdAuth.enshureAuth],pedidosController.getMensajero);
 api.get("/getFormaPago",[mdAuth.enshureAuth],pedidosController.getFormaPago);
 api.get("/getZonas",[mdAuth.enshureAuth],pedidosController.getZonas);
@@ -32,7 +32,8 @@ api.get("/listPedidoFecha/:fecha",[mdAuth.enshureAuth],pedidosController.getFech
 api.get("/listPedidoFechaEmpresa/:fecha/:id",[mdAuth.enshureAuth],pedidosController.getFechaPedidosEmpresa); // fecha pedidos y empresa
 api.get("/listEmpresa",[mdAuth.enshureAuth],pedidosController.getEmpresa); // empresa
 api.get("/listPedidoMensajero/:id",[mdAuth.enshureAuth],pedidosController.getEmpresaMensajero); // mensajero
-api.get("/listPedidoRango/:start/:end/:id",[mdAuth.enshureAuth],pedidosController.getRangoEmpresa); // empresa y rango
+api.get("/getPedidoMensajeroFechaRango/:start/:end/:id",[mdAuth.enshureAuth],pedidosController.getPedidoMensajeroFechaRango); // mensajero y rango
+api.get("/getPedidoMensajeroFechaRangoEstado/:start/:end/:id/:estado",[mdAuth.enshureAuth],pedidosController.getPedidoMensajeroFechaRangoEstado); // empresa y rango estado
 
 
 api.get("/getNoMensajero/:id",[mdAuth.enshureAuth],pedidosController.getPendientesMensajero);
@@ -45,6 +46,7 @@ api.get("/listPedidoFechaEmpresaEstado/:fecha/:estado/:id",[mdAuth.enshureAuth],
 api.get("/listPedidoMensajeroEstado/:id/:estado",[mdAuth.enshureAuth],pedidosController.getPedidoMensajeroEstado); // mensajero y estado
 api.get("/listPedidoRangoEstado/:start/:end/:id/:estado",[mdAuth.enshureAuth],pedidosController.getRangoEmpresaEstado); // empresa y rango
 api.get("/listEspecialEstado/:estado",[mdAuth.enshureAuth],pedidosController.getEspecialEstado); // empresa y rango
+api.get("/listPedidoRango/:start/:end/:id",[mdAuth.enshureAuth],pedidosController.getRangoEmpresa); // empresa y rango
 
 
 

@@ -23,6 +23,8 @@ function saveNotification(req,res){
 
         let query1 = 'call saveNotificationToken("'+req.body.usuarioId+'","'+req.body.token+'","'+req.body.tipoUsuarioId+'")';
         let query2 = 'call updateNotification("'+req.body.token+'","'+req.body.tipoUsuarioId+'", "'+req.body.usuarioId+'")';
+        let query3 = 'call searchNotificationByUser("'+req.body.usuarioId+'")';
+        let query4= 'call updateNotificationByToken("'+req.body.token+'","'+req.body.tipoUsuarioId+'", "'+req.body.usuarioId+'")';
         
         conexion.query(query, (err, findToken)=>{
             if(err){
@@ -30,28 +32,58 @@ function saveNotification(req,res){
                 res.send({message:"error general"});
             }else if(findToken){
                 if(findToken[0].length!=0){
-                    conexion.query(query2, (err, updateToken)=>{
+                    conexion.query(query4, (err, updateToken)=>{
                         if(err){
                             console.log(err)
                             res.send({message:"error general"});
                         }else if(updateToken){
-                            res.send({message:"se ha actualizado correctamente la notificación",updateToken});
+                            res.send({message:"se ha actualizado correctamente la notificación 1 ",updateToken});
                         }else{
                             res.send({message:"no se ha actualizado el token de notificación"})
                         }
                     });
                 }else{
-                    console.log("find not have value")
-                    conexion.query(query1, (err, insertNotificationToken)=>{
+                    conexion.query(query3, (err, find)=>{
                         if(err){
-                            console.log(err)
-                            res.send({message:"error general"});
-                        }else if(insertNotificationToken){
-                            res.send({message:"se ha guardado correctamente la notificación",insertNotificationToken});
+                            console.log(err);
+                        }else if(find){
+                            if(find[0].length!=0){
+                                conexion.query(query2, (err, updateToken)=>{
+                                    if(err){
+                                        console.log(err)
+                                        res.send({message:"error general"});
+                                    }else if(updateToken){
+                                        res.send({message:"se ha actualizado correctamente la notificación 2",updateToken});
+                                    }else{
+                                        res.send({message:"no se ha actualizado el token de notificación"})
+                                    }
+                                });
+                            }else{
+                                conexion.query(query1, (err, insertNotificationToken)=>{
+                                    if(err){
+                                        console.log(err)
+                                        res.send({message:"error general"});
+                                    }else if(insertNotificationToken){
+                                        res.send({message:"se ha guardado correctamente la notificación",insertNotificationToken});
+                                    }else{
+                                        res.send({message:"no se ha guardado el token de notificación"})
+                                    }
+                                });
+                            }
                         }else{
-                            res.send({message:"no se ha guardado el token de notificación"})
+                            conexion.query(query1, (err, insertNotificationToken)=>{
+                                if(err){
+                                    console.log(err)
+                                    res.send({message:"error general"});
+                                }else if(insertNotificationToken){
+                                    res.send({message:"se ha guardado correctamente la notificación",insertNotificationToken});
+                                }else{
+                                    res.send({message:"no se ha guardado el token de notificación"})
+                                }
+                            });
                         }
                     });
+    
                 }
             }else{
                 console.log("no se encontraron")
@@ -131,23 +163,18 @@ function listNotificationAdmin(req,res){
                 console.log(err)
                 res.send({message:"error general"});
             }else if(findToken){
-                let response;
                 for(let find of findToken[0]){
-                    const options = notification_options;
-                    console.log(find.tokenValue);
                     let notificationMessage = {
                         notification: { 
                             title: req.body.title, 
                             body: req.body.message
                         },
-                        token: find.tokenValue,
+                        token: find.tokenValue
                     }
                     firebaseAdmin.messaging().send(notificationMessage).then((response)=>{
                         console.log("notificación enviada")
-                        response =response;
                     }).catch((error)=>{
-                        response = error;
-                        res.send({message:"error general", error});
+                        console.log(error)
                     })
                 }
                 res.send({message:"Token notification",findToken});
@@ -217,6 +244,7 @@ function listNotificationMensajero(req,res){
                 console.log(err)
                 res.send({message:"error general"});
             }else if(findToken){
+                let response;
                 for(let find of findToken[0]){
                     const options = notification_options;
                     console.log(find.tokenValue);
@@ -227,10 +255,12 @@ function listNotificationMensajero(req,res){
                         },
                         token: find.tokenValue,
                     }
-                    firebaseAdmin.messaging().sendToDevice( notificationMessage).then((response)=>{
+                    firebaseAdmin.messaging().send(notificationMessage).then((response)=>{
                         console.log("notificación enviada")
+                        response =response;
                     }).catch((error)=>{
-                        res.send({message:"error general", error});
+                        response = error;
+                        console.log(error)
                     })
                 }
                 res.send({message:"Token notification",findToken});
@@ -238,6 +268,7 @@ function listNotificationMensajero(req,res){
                 res.send({message:"no se ha guardado el token de notificación"})
             }
         });
+
     }else{
         res.send({message:"Ingresa los campos obligatorios"})
     }

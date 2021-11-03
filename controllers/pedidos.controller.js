@@ -225,8 +225,8 @@ function confirmarPedidoEspecial(req, res){
     var pedidoId = req.params.id;
     var params = req.body;
 
-    if(params.mensajero && params.costo && params.estado && params.monto && params.formaP && params.coment){
-        let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajero+'","'+params.costo+'","'+params.estado+'","'+params.monto+'","'+params.formaP+'","'+params.coment+'")';            
+    if(params.mensajeroId && params.estadoPedidoId  && params.formaPagoId && params.pedidoDesc){
+        let query = 'call Sp_ConfirmarPedido("'+pedidoId+'","'+params.mensajeroId+'","'+params.pedidoCosto+'","'+params.estadoPedidoId+'","'+params.pedidoMonto+'","'+params.formaPagoId+'","'+params.pedidoDesc+'")';            
 
         conexion.query(query, (err, pedidoUpdate)=>{
             if(err){
@@ -238,6 +238,13 @@ function confirmarPedidoEspecial(req, res){
             }
         })
     }else{
+        console.log(params)
+        console.log(params.mensajeroId);
+        console.log( params.pedidoCosto); 
+        console.log(params.estadoPedidoId) 
+        console.log(params.pedidoMonto) 
+        console.log(params.formaPagoId) 
+        console.log(params.pedidoDesc)
         res.send({message:"Ingresa los campos obligatorios"});
     }
 }
@@ -590,7 +597,7 @@ function entregarPedido(req,res){
     params.estado = 3;
     params.ruta = "default";
     params.fecha = moment().tz('America/Guatemala').format("YYYY-MM-DD");
-    if(params.pedidoId && params.estado &&  params.ruta && params.comentarioMensajero && params.fecha  && params.pedidoCosto &&  params.formaPagoId && params.pedidoMonto){
+    if(params.pedidoId && params.estado &&  params.ruta && params.comentarioMensajero && params.fecha   &&  params.formaPagoId ){
         
         let query = 'call Sp_EntregarPedido("'+params.pedidoId+'","'+params.estado+'","'+params.ruta+'","'+params.comentarioMensajero+'","'+params.fecha+'","'+params.pedidoCosto+'","'+params.formaPagoId+'","'+params.pedidoMonto+'")';
         console.log(query);
@@ -704,7 +711,7 @@ function uploadImgPedido(req, res){
         var filePath = req.files.image.path;
         //separa en indices cada carpeta
         //si se trabaja en linux ('\');
-        var fileSplit = filePath.split('\\');
+        var fileSplit =  req.files.image.path.split('/');
         //captura el nombre de la imagen
         var fileName = fileSplit[2];
 
@@ -768,6 +775,44 @@ function getFechaPedidos(req,res){
     });
 }
 
+
+
+function getPedidoMensajeroFechaRango(req,res){
+    var fechaInicio = req.params.start;
+    var fechaFinal = req.params.end;
+    var id = req.params.id;
+
+
+    let query = 'call listarPedidoMensajeroRangoFecha("'+id+'","'+fechaInicio+'","'+fechaFinal+'")';
+    conexion.query(query, (err, findPedidos)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(findPedidos){
+            res.send({message:"pedidos encontrado", findPedidos});
+        }else{
+            res.send({message:"no hay registros de pedidos"})
+        }
+    });
+}
+
+
+function getPedidoMensajeroFechaRangoEstado(req,res){
+    var fechaInicio = req.params.start;
+    var fechaFinal = req.params.end;
+    var id = req.params.id;
+    var estado = req.params.estado
+
+    let query = 'call listarPedidoMensajeroRangoFechaEstado("'+id+'","'+fechaInicio+'","'+fechaFinal+'","'+estado+'")';
+    conexion.query(query, (err, findPedidos)=>{
+        if(err){
+            res.send({message:"error general"});
+        }else if(findPedidos){
+            res.send({message:"pedidos encontrado", findPedidos});
+        }else{
+            res.send({message:"no hay registros de pedidos"})
+        }
+    });
+}
 
 function getFechaPedidosEStado(req,res){
     var fecha = req.params.fecha;
@@ -1068,5 +1113,7 @@ module.exports ={
     getPedidoEspecialFecha,
     getPedidoEspecialFechaEstado,
     getEspecialRangoEstado,
-    getPendientesMensajero
+    getPendientesMensajero,
+    getPedidoMensajeroFechaRango,
+    getPedidoMensajeroFechaRangoEstado
 }
